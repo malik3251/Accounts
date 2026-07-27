@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خزنة الحسابات الاحترافية | Pro Password Manager</title>
+
+    <!-- 📱 إعدادات PWA لتثبيت التطبيق -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0B132B">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="الخزنة">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3064/3064155.png">
+
+    <!-- Bootstrap 5 RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome 6.5 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;600;700;800&family=Readex+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- CryptoJS (AES Encryption) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #0B132B;
+            --bg-gradient: linear-gradient(135deg, #0B132B 0%, #1C2541 100%);
+            --card-glass: rgba(28, 37, 65, 0.85);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --input-bg: #0B132B;
+            --accent-blue: #38BDF8;
+            --accent-indigo: #818CF8;
+            --btn-gradient: linear-gradient(135deg, #6366F1 0%, #4F46E5 100%);
+            --btn-success: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --text-primary: #FFFFFF;
+            --text-secondary: #CBD5E1;
+        }
+
+        body {
+            font-family: 'Cairo', 'Readex Pro', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .glass-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .auth-container {
+            max-width: 440px;
+            margin: 80px auto;
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .form-control, .form-select {
+            background-color: var(--input-bg) !important;
+            border: 1.5px solid var(--card-border) !important;
+            color: #FFFFFF !important;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-size: 1rem;
+            font-family: 'Readex Pro', sans-serif;
+            transition: all 0.25s ease;
+        }
+
+        .form-control::placeholder {
+            color: #94A3B8 !important;
+        }
+
+        .form-select option {
+            background-color: #1C2541;
+            color: #FFFFFF;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: var(--input-bg) !important;
+            border-color: var(--accent-blue) !important;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15) !important;
+        }
+
+        .btn-custom-primary {
+            background: var(--btn-gradient);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 12px 24px;
+            font-size: 1.05rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.35);
+            transition: all 0.2s ease;
+        }
+
+        .btn-custom-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+            color: #FFFFFF;
+        }
+
+        .btn-custom-success {
+            background: var(--btn-success);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 9px 18px;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-action-icon {
+            width: 38px;
+            height: 38px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: rgba(255, 255, 255, 0.08);
+            color: #FFFFFF;
+            transition: all 0.2s;
+        }
+
+        .btn-action-icon:hover {
+            background: var(--accent-blue);
+            color: #0B132B;
+            border-color: var(--accent-blue);
+        }
+
+        .btn-action-delete:hover {
+            background: #EF4444;
+            color: #FFFFFF;
+            border-color: #EF4444;
+        }
+
+        .table {
+            --bs-table-bg: transparent !important;
+            --bs-table-color: #FFFFFF !important;
+            color: #FFFFFF !important;
+            vertical-align: middle;
+            margin-bottom: 0;
+        }
+
+        .table th, .table td {
+            background-color: transparent !important;
+            color: #FFFFFF !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+            padding: 14px 10px;
+        }
+
+        .table thead th {
+            color: var(--accent-blue) !important;
+            font-weight: 800;
+            font-size: 0.95rem;
+            border-bottom: 2px solid rgba(56, 189, 248, 0.3) !important;
+        }
+
+        .service-badge {
+            background: rgba(56, 189, 248, 0.15) !important;
+            color: #38BDF8 !important;
+            border: 1px solid rgba(56, 189, 248, 0.35) !important;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .password-field {
+            font-family: 'Readex Pro', monospace;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: #38BDF8 !important;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 9999;
+        }
+
+        .custom-toast {
+            background: #1E293B;
+            border: 1px solid var(--accent-blue);
+            color: #FFFFFF;
+            border-radius: 14px;
+            font-weight: 600;
+        }
+
+        .e2e-badge {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10B981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- التنبيهات المنبثقة -->
+    <div class="toast-container">
+        <div id="liveToast" class="toast custom-toast p-2" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex align-items-center">
+                <i class="fa-solid fa-circle-check text-info fa-lg ms-3 me-2"></i>
+                <div class="toast-body" id="toastMessage"></div>
+                <button type="button" class="btn-close btn-close-white ms-auto me-2" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- شاشة قفل PIN / التأسيس -->
+    <div id="authScreen" class="container">
+        <div class="glass-card auth-container p-4 p-md-5 text-center">
+            <div class="mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center p-3 rounded-circle" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3);">
+                    <i class="fa-solid fa-shield-halved fa-3x" style="color: #818CF8;"></i>
+                </div>
+            </div>
+
+            <!-- تسجيل الدخول -->
+            <div id="loginForm">
+                <h3 class="fw-bold mb-2">خزنة الحسابات</h3>
+                <p class="text-secondary small mb-4">أدخل رمز الأمان (PIN) لفك تشفير بياناتك</p>
+                <form onsubmit="handleAuth(event, 'login')">
+                    <div class="mb-4">
+                        <input type="password" id="pinInput" class="form-control text-center fs-3 py-2" placeholder="••••" maxlength="8" required autofocus style="letter-spacing: 6px;">
+                    </div>
+                    <button type="submit" class="btn btn-custom-primary w-100 py-3"><i class="fa-solid fa-lock-open me-2"></i> فتح الخزنة</button>
+                </form>
+            </div>
+
+            <!-- تعيين رمز PIN لأول مرة -->
+            <div id="setupForm" class="d-none">
+                <h3 class="fw-bold mb-2 text-warning">إنشاء رمز أمان جديد</h3>
+                <p class="text-secondary small mb-4">اختر رمز PIN لحماية وتشفير بياناتك سحابياً</p>
+                <form onsubmit="handleAuth(event, 'setup')">
+                    <div class="mb-4">
+                        <input type="password" id="newPinInput" class="form-control text-center fs-3 py-2" placeholder="أدخل الرمز الجديد" required style="letter-spacing: 4px;">
+                    </div>
+                    <button type="submit" class="btn btn-warning w-100 py-3 fw-bold text-dark fs-5"><i class="fa-solid fa-key me-2"></i> حفظ الرمز الجديد</button>
+                </form>
+            </div>
+
+            <div id="authError" class="alert alert-danger mt-4 d-none py-2 fs-6"></div>
+        </div>
+    </div>
+
+    <!-- لوحة إدارة الحسابات الرئيسية -->
+    <div id="appScreen" class="container py-4 d-none">
+        <!-- الهيدر العلوي -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom border-secondary border-opacity-25 gap-3">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <h2 class="fw-bold mb-0"><i class="fa-solid fa-vault text-warning me-2"></i> خزنة الحسابات الاحترافية</h2>
+                    <span class="e2e-badge"><i class="fa-solid fa-lock me-1"></i> AES-256</span>
+                </div>
+                <span class="text-secondary fs-6">مزامنة مشفرة بالكامل - القفل التلقائي نَشِط (دقيقتين)</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <button class="btn btn-custom-success" onclick="saveToCloud()"><i class="fa-solid fa-cloud-arrow-up me-1"></i> حفظ السحابة</button>
+                <button class="btn btn-outline-info btn-sm px-3 py-2" onclick="exportData()"><i class="fa-solid fa-download me-1"></i> تصدير JSON</button>
+                <label class="btn btn-outline-warning btn-sm px-3 py-2 mb-0" style="cursor: pointer;">
+                    <i class="fa-solid fa-upload me-1"></i> استيراد
+                    <input type="file" id="importFile" onchange="importData(event)" accept=".json" class="d-none">
+                </label>
+                <button class="btn btn-outline-light btn-sm px-3 py-2 border-opacity-25" onclick="location.reload()"><i class="fa-solid fa-power-off me-1"></i> قفل</button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- نموذج إضافة حساب جديد -->
+            <div class="col-lg-4">
+                <div class="glass-card p-4">
+                    <h4 class="fw-bold mb-3 text-info d-flex align-items-center"><i class="fa-solid fa-plus-circle me-2"></i> إضافة حساب جديد</h4>
+                    <form onsubmit="addAccount(event)">
+                        
+                        <!-- القائمة المنسدلة للخدمات -->
+                        <div class="mb-3">
+                            <label class="form-label">اسم الحساب / الخدمة</label>
+                            <select id="accService" class="form-select" required>
+                                <option value="" disabled selected>اختر الحساب...</option>
+                                <option value="فيس بوك">فيس بوك</option>
+                                <option value="انستغرام">انستغرام</option>
+                                <option value="جيميل">جيميل</option>
+                                <option value="تيك توك">تيك توك</option>
+                                <option value="تويتر">تويتر</option>
+                                <option value="أخرى">أخرى</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">البريد الإلكتروني (Email)</label>
+                            <input type="email" id="accEmail" class="form-control" placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">اسم المستخدم (Username)</label>
+                            <input type="text" id="accUser" class="form-control" placeholder="اسم المستخدم إن وجد">
+                        </div>
+
+                        <!-- كلمة المرور مع المولد والمقياس -->
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label mb-0">كلمة السر (Password)</label>
+                                <button type="button" class="btn btn-link text-info p-0 text-decoration-none small fw-bold" onclick="generateStrongPassword()"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> توليد كلمة قوية</button>
+                            </div>
+                            <input type="text" id="accPass" class="form-control mb-2" oninput="checkStrength(this.value)" placeholder="كلمة المرور" required>
+                            
+                            <!-- مقياس قوة كلمة المرور -->
+                            <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.1);">
+                                <div id="strengthBar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
+                            </div>
+                            <div id="strengthText" class="small mt-1 text-end"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">ملاحظات / رابط الدخول</label>
+                            <textarea id="accNotes" class="form-control" rows="2" placeholder="ملاحظات أو رابط الموقع"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-custom-primary w-100 py-2.5"><i class="fa-solid fa-plus me-2"></i> إضافة للقائمة</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- جدول الحسابات المحفوظة -->
+            <div class="col-lg-8">
+                <div class="glass-card p-4">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center mb-4 gap-3">
+                        <h4 class="fw-bold mb-0 text-info"><i class="fa-solid fa-key me-2"></i> الحسابات المسجلة</h4>
+                        <div class="position-relative w-100 w-sm-50">
+                            <input type="text" id="searchInput" onkeyup="filterAccounts()" class="form-control pe-5" placeholder="🔍 بحث عن حساب...">
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>الخدمة</th>
+                                    <th>المستخدم / البريد</th>
+                                    <th>كلمة السر (AES)</th>
+                                    <th>ملاحظات</th>
+                                    <th class="text-center">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="accountsTbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyXQv8TxXZxu_QaCkKo33R5eT4nkr0VNjsXJLlWIWgxaPuewF0HPzAAyljcxr9UGE0-/exec";
+
+        let currentPIN = "";
+        let accountsData = [];
+        let inactivityTimer;
+        const LOCK_TIMEOUT_MS = 2 * 60 * 1000;
+
+        // 📲 تسجيل PWA Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('PWA SW Registered successfully!', reg))
+                    .catch(err => console.log('PWA SW Registration failed:', err));
+            });
+        }
+
+        function encryptPass(text) {
+            return CryptoJS.AES.encrypt(text, currentPIN).toString();
+        }
+
+        function decryptPass(cipherText) {
+            try {
+                let bytes = CryptoJS.AES.decrypt(cipherText, currentPIN);
+                let original = bytes.toString(CryptoJS.enc.Utf8);
+                return original || cipherText;
+            } catch(e) {
+                return cipherText;
+            }
+        }
+
+        function showToast(msg) {
+            document.getElementById("toastMessage").innerText = msg;
+            const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+            toast.show();
+        }
+
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            if (!document.getElementById("appScreen").classList.contains("d-none")) {
+                inactivityTimer = setTimeout(() => {
+                    alert("تم قفل الخزنة تلقائياً بسبب عدم النشاط للحفاظ على أمانك! 🔒");
+                    location.reload();
+                }, LOCK_TIMEOUT_MS);
+            }
+        }
+
+        ['mousemove', 'keydown', 'click', 'touchstart'].forEach(evt => {
+            window.addEventListener(evt, resetInactivityTimer);
+        });
+
+        function handleAuth(e, type) {
+            e.preventDefault();
+            const errDiv = document.getElementById("authError");
+            errDiv.classList.add("d-none");
+
+            let payload = {};
+            if (type === 'setup') {
+                payload = { action: "setup_pin", newPin: document.getElementById("newPinInput").value.trim() };
+            } else {
+                currentPIN = document.getElementById("pinInput").value.trim();
+                payload = { action: "get_accounts", pin: currentPIN };
+            }
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify(payload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "setup_required") {
+                    document.getElementById("loginForm").classList.add("d-none");
+                    document.getElementById("setupForm").classList.remove("d-none");
+                } else if (data.status === "success") {
+                    if (type === 'setup') {
+                        showToast(data.message);
+                        document.getElementById("setupForm").classList.add("d-none");
+                        document.getElementById("loginForm").classList.remove("d-none");
+                    } else {
+                        accountsData = data.accounts || [];
+                        document.getElementById("authScreen").classList.add("d-none");
+                        document.getElementById("appScreen").classList.remove("d-none");
+                        resetInactivityTimer();
+                        renderAccounts();
+                    }
+                } else {
+                    errDiv.innerText = data.message;
+                    errDiv.classList.remove("d-none");
+                }
+            })
+            .catch(() => {
+                errDiv.innerText = "تعذر الاتصال بالسحابة! تأكد من إعدادات النشر لـ Anyone.";
+                errDiv.classList.remove("d-none");
+            });
+        }
+
+        function getServiceIcon(service) {
+            switch(service) {
+                case "فيس بوك": return '<i class="fa-brands fa-facebook text-primary fa-lg me-2"></i>';
+                case "انستغرام": return '<i class="fa-brands fa-instagram text-danger fa-lg me-2"></i>';
+                case "جيميل": return '<i class="fa-brands fa-google text-danger fa-lg me-2"></i>';
+                case "تيك توك": return '<i class="fa-brands fa-tiktok text-light fa-lg me-2"></i>';
+                case "تويتر": return '<i class="fa-brands fa-x-twitter text-light fa-lg me-2"></i>';
+                default: return '<i class="fa-solid fa-globe text-info fa-lg me-2"></i>';
+            }
+        }
+
+        function renderAccounts(filter = "") {
+            const tbody = document.getElementById("accountsTbody");
+            tbody.innerHTML = "";
+
+            const filtered = accountsData.filter(a => 
+                a.service.toLowerCase().includes(filter.toLowerCase()) || 
+                a.email.toLowerCase().includes(filter.toLowerCase()) ||
+                a.username.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-secondary py-5 fs-6">لا توجد حسابات مسجلة حالياً</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((acc, index) => {
+                const plainPassword = decryptPass(acc.password);
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <span class="service-badge">
+                            ${getServiceIcon(acc.service)}
+                            ${acc.service}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="fw-bold fs-6 text-white">${acc.email ? acc.email : '-'}</div>
+                        <div class="text-secondary small">${acc.username ? '@' + acc.username : ''}</div>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="password" value="${plainPassword}" readonly class="form-control border-0 bg-transparent password-field px-0" id="pass_${index}" style="width: 110px;">
+                            <button class="btn-action-icon" onclick="togglePass(${index})" title="إظهار / إخفاء"><i class="fa-solid fa-eye" id="eye_${index}"></i></button>
+                            <button class="btn-action-icon text-info" onclick="copyText('${plainPassword}')" title="نسخ كلمة المرور"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                    </td>
+                    <td class="small text-secondary" style="max-width: 140px;">${acc.notes ? acc.notes : '-'}</td>
+                    <td class="text-center">
+                        <button class="btn-action-icon btn-action-delete" onclick="deleteAccount(${index})" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function generateStrongPassword() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=";
+            let password = "";
+            const array = new Uint32Array(16);
+            window.crypto.getRandomValues(array);
+            for (let i = 0; i < 16; i++) {
+                password += chars[array[i] % chars.length];
+            }
+            const passInput = document.getElementById("accPass");
+            passInput.value = password;
+            checkStrength(password);
+            showToast("تم توليد كلمة مرور قوية جداً! 🎲");
+        }
+
+        function checkStrength(pass) {
+            const bar = document.getElementById("strengthBar");
+            const text = document.getElementById("strengthText");
+            if (!pass) {
+                bar.style.width = "0%";
+                text.innerText = "";
+                return;
+            }
+            let score = 0;
+            if (pass.length >= 8) score++;
+            if (pass.length >= 12) score++;
+            if (/[A-Z]/.test(pass)) score++;
+            if (/[0-9]/.test(pass)) score++;
+            if (/[^A-Za-z0-9]/.test(pass)) score++;
+
+            if (score <= 2) {
+                bar.style.width = "33%";
+                bar.className = "progress-bar bg-danger";
+                text.innerHTML = "<span class='text-danger fw-bold'>ضعيفة ⚠️</span>";
+            } else if (score <= 4) {
+                bar.style.width = "66%";
+                bar.className = "progress-bar bg-warning";
+                text.innerHTML = "<span class='text-warning fw-bold'>متوسطة ⚖️</span>";
+            } else {
+                bar.style.width = "100%";
+                bar.className = "progress-bar bg-success";
+                text.innerHTML = "<span class='text-success fw-bold'>قوية جداً 🛡️</span>";
+            }
+        }
+
+        function addAccount(e) {
+            e.preventDefault();
+            const rawPass = document.getElementById("accPass").value;
+            accountsData.push({
+                id: accountsData.length + 1,
+                service: document.getElementById("accService").value,
+                email: document.getElementById("accEmail").value,
+                username: document.getElementById("accUser").value,
+                password: encryptPass(rawPass),
+                notes: document.getElementById("accNotes").value
+            });
+            renderAccounts();
+            e.target.reset();
+            checkStrength("");
+            showToast("تمت إضافة الحساب وتشفيره محلياً!");
+        }
+
+        function deleteAccount(index) {
+            if (confirm("هل أنت تأكد من حذف هذا الحساب؟")) {
+                accountsData.splice(index, 1);
+                renderAccounts();
+                showToast("تم حذف الحساب");
+            }
+        }
+
+        function togglePass(index) {
+            const input = document.getElementById(`pass_${index}`);
+            const eye = document.getElementById(`eye_${index}`);
+            if (input.type === "password") {
+                input.type = "text";
+                eye.className = "fa-solid fa-eye-slash";
+            } else {
+                input.type = "password";
+                eye.className = "fa-solid fa-eye";
+            }
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            showToast("تم نسخ كلمة المرور بنجاح!");
+        }
+
+        function filterAccounts() {
+            renderAccounts(document.getElementById("searchInput").value);
+        }
+
+        function saveToCloud() {
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain" },
+                body: JSON.stringify({
+                    action: "save_accounts",
+                    pin: currentPIN,
+                    accounts: accountsData
+                })
+            })
+            .then(res => res.json())
+            .then(data => showToast(data.message));
+        }
+
+        function exportData() {
+            if (accountsData.length === 0) {
+                showToast("لا توجد بيانات للتصدير!");
+                return;
+            }
+            const exportArray = accountsData.map(acc => ({
+                service: acc.service,
+                email: acc.email,
+                username: acc.username,
+                password: decryptPass(acc.password),
+                notes: acc.notes
+            }));
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportArray, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `accounts_backup_${new Date().toISOString().slice(0,10)}.json`);
+            dlAnchorElem.click();
+            showToast("تم تصدير ملف النسخة الاحتياطية بنجاح 📥");
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (Array.isArray(imported)) {
+                        imported.forEach(acc => {
+                            accountsData.push({
+                                id: accountsData.length + 1,
+                                service: acc.service || "أخرى",
+                                email: acc.email || "",
+                                username: acc.username || "",
+                                password: encryptPass(acc.password || ""),
+                                notes: acc.notes || ""
+                            });
+                        });
+                        renderAccounts();
+                        showToast("تم استيراد الحسابات بنجاح 📤");
+                    }
+                } catch (err) {
+                    alert("حدث خطأ أثناء قراءة الملف! تأكد من أنه ملف JSON صحيح.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
