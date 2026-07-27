@@ -312,6 +312,28 @@
             min-width: 150px;
         }
 
+        /* نافذة الإضافة (Modal) */
+        #add-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 1050;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-md);
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            padding: var(--space-xl);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
         .bottom-nav {
             display: none;
             position: fixed;
@@ -384,6 +406,7 @@
 </head>
 <body>
 
+    <!-- شاشة قفل الـ PIN -->
     <div id="pin-screen">
         <div class="pin-card">
             <h2 id="pin-title">خزنة الحسابات الآمنة</h2>
@@ -398,6 +421,36 @@
         </div>
     </div>
 
+    <!-- نافذة إضافة حساب جديد (Modal) -->
+    <div id="add-modal">
+        <div class="modal-card">
+            <h3 style="font-size: var(--font-lg); margin-bottom: var(--space-md); color: var(--text-main);">➕ إضافة حساب جديد</h3>
+            <form id="add-account-form" onsubmit="saveNewAccount(event)">
+                <div style="margin-bottom: var(--space-md);">
+                    <label style="display: block; font-size: var(--font-sm); margin-bottom: var(--space-xs); color: var(--text-muted);">اسم الحساب أو المنصة</label>
+                    <input type="text" id="acc-name" class="form-control" required placeholder="مثال: Google, Facebook">
+                </div>
+                <div style="margin-bottom: var(--space-md);">
+                    <label style="display: block; font-size: var(--font-sm); margin-bottom: var(--space-xs); color: var(--text-muted);">اسم المستخدم / البريد الإلكتروني</label>
+                    <input type="text" id="acc-user" class="form-control" required placeholder="user@example.com">
+                </div>
+                <div style="margin-bottom: var(--space-md);">
+                    <label style="display: block; font-size: var(--font-sm); margin-bottom: var(--space-xs); color: var(--text-muted);">كلمة المرور</label>
+                    <input type="text" id="acc-pass" class="form-control" required placeholder="كلمة المرور">
+                </div>
+                <div style="margin-bottom: var(--space-lg);">
+                    <label style="display: block; font-size: var(--font-sm); margin-bottom: var(--space-xs); color: var(--text-muted);">التصنيف</label>
+                    <input type="text" id="acc-cat" class="form-control" required placeholder="عام، وسائل تواصل، بنوك...">
+                </div>
+                <div style="display: flex; gap: var(--space-sm); justify-content: flex-end;">
+                    <button type="button" class="btn" style="background: #e2e8f0; color: var(--text-main);" onclick="closeAddModal()">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ في السحابة</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- حاوية التطبيق -->
     <div class="app-container">
         <sidebar>
             <div class="sidebar-brand">
@@ -478,6 +531,9 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRA_WuLm4rRNJDqNen7A1joku9AHlC3GOWeVIPzVDpXxaWhmMWDFpnnKKG88if43ho3A/exec";
+        
+        let currentAccounts = [];
+        let currentPin = "";
 
         const pinInputs = document.querySelectorAll('.pin-digit');
         pinInputs.forEach((input, index) => {
@@ -508,6 +564,7 @@
                 showToast("الرجاء إدخال رمز مكون من 4 خانات");
                 return;
             }
+            currentPin = pin;
 
             try {
                 let response = await fetch(SCRIPT_URL, {
@@ -524,11 +581,13 @@
                     let setupResult = await setupRes.json();
                     showToast(setupResult.message);
                     document.getElementById('pin-screen').style.display = 'none';
-                    loadAccountsData([]);
+                    currentAccounts = [];
+                    loadAccountsData(currentAccounts);
                 } else if (result.status === "success") {
                     document.getElementById('pin-screen').style.display = 'none';
                     showToast("تم فتح الخزنة بنجاح");
-                    loadAccountsData(result.accounts);
+                    currentAccounts = result.accounts || [];
+                    loadAccountsData(currentAccounts);
                 } else {
                     showToast(result.message || "رمز الـ PIN غير صحيح!");
                 }
@@ -540,7 +599,7 @@
         function loadAccountsData(accounts) {
             const tbody = document.getElementById('accounts-table-body');
             if (!accounts || accounts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: var(--space-xl);">لا توجد حسابات مضافة حالياً. اضغط على "إضافة حساب جديد"</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: var(--space-xl);">لا توجد حسابات مضافة حالياً. اضغط على "+ إضافة حساب جديد"</td></tr>`;
                 document.getElementById('total-accounts').textContent = '0';
                 document.getElementById('total-categories').textContent = '0';
                 return;
@@ -550,9 +609,9 @@
                 <tr>
                     <td class="cell-wrap">${acc.name}</td>
                     <td class="cell-wrap">${acc.user}</td>
-                    <td>••••••••</td>
+                    <td>${acc.pass}</td>
                     <td>${acc.category}</td>
-                    <td><button class="btn" style="padding: 4px 8px; font-size: var(--font-xs); background: #e2e8f0;" onclick="deleteAccount(${index})">حذف</button></td>
+                    <td><button class="btn" style="padding: 4px 8px; font-size: var(--font-xs); background: #fee2e2; color: #dc2626;" onclick="deleteAccount(${index})">حذف</button></td>
                 </tr>
             `).join('');
             
@@ -562,7 +621,71 @@
         }
 
         function openAddModal() {
-            showToast("نافذة إضافة حساب جديد قيد التطوير");
+            document.getElementById('add-modal').style.display = 'flex';
+        }
+
+        function closeAddModal() {
+            document.getElementById('add-modal').style.display = 'none';
+            document.getElementById('add-account-form').reset();
+        }
+
+        async function saveNewAccount(e) {
+            e.preventDefault();
+            const newAcc = {
+                name: document.getElementById('acc-name').value,
+                user: document.getElementById('acc-user').value,
+                pass: document.getElementById('acc-pass').value,
+                category: document.getElementById('acc-cat').value
+            };
+
+            currentAccounts.push(newAcc);
+
+            try {
+                showToast("جاري الحفظ والمزامنة السحابية...");
+                let response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "save_accounts", pin: currentPin, accounts: currentAccounts })
+                });
+                let result = await response.json();
+
+                if (result.status === "success") {
+                    showToast("تمت الإضافة والحفظ في الشيت بنجاح!");
+                    closeAddModal();
+                    loadAccountsData(currentAccounts);
+                } else {
+                    showToast(result.message || "حدث خطأ أثناء الحفظ");
+                    currentAccounts.pop(); // التراجع في حال الخطأ
+                }
+            } catch (error) {
+                showToast("خطأ في الاتصال بالخادم");
+                currentAccounts.pop();
+            }
+        }
+
+        async function deleteAccount(index) {
+            if (!confirm("هل أنت متأكد من رغبتك في حذف هذا الحساب؟")) return;
+
+            let removed = currentAccounts.splice(index, 1);
+
+            try {
+                showToast("جاري التحديث...");
+                let response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "save_accounts", pin: currentPin, accounts: currentAccounts })
+                });
+                let result = await response.json();
+
+                if (result.status === "success") {
+                    showToast("تم الحذف والتحديث بنجاح!");
+                    loadAccountsData(currentAccounts);
+                } else {
+                    showToast("حدث خطأ أثناء الحذف");
+                    currentAccounts.splice(index, 0, removed[0]); // استعادة العنصر عند الفشل
+                }
+            } catch (error) {
+                showToast("خطأ في الاتصال بالخادم");
+                currentAccounts.splice(index, 0, removed[0]);
+            }
         }
     </script>
 </body>
