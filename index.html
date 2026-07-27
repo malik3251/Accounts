@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>خزنة الحسابات الآمنة - لوحة التحكم</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4f46e5">
     <style>
         :root {
             --primary: #4f46e5;
@@ -35,7 +37,6 @@
             flex-direction: column;
         }
 
-        /* شاشة الـ PIN */
         #pin-screen {
             position: fixed;
             inset: 0;
@@ -80,7 +81,6 @@
             border-color: var(--primary);
         }
 
-        /* تخطيط التطبيق */
         .app-container {
             display: flex;
             flex: 1;
@@ -263,7 +263,6 @@
             font-size: 0.85rem;
         }
 
-        /* نافذة الإضافة */
         #add-modal {
             display: none;
             position: fixed;
@@ -285,7 +284,6 @@
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         }
 
-        /* شريط التنقل السفلي للهواتف */
         .bottom-nav {
             display: none;
             position: fixed;
@@ -348,7 +346,6 @@
 </head>
 <body>
 
-    <!-- شاشة الـ PIN -->
     <div id="pin-screen">
         <div class="pin-card">
             <h2>خزنة الحسابات الآمنة</h2>
@@ -363,7 +360,6 @@
         </div>
     </div>
 
-    <!-- نافذة إضافة حساب -->
     <div id="add-modal">
         <div class="modal-card">
             <h3 style="margin-bottom: 16px;">➕ إضافة حساب جديد</h3>
@@ -381,7 +377,6 @@
     </div>
 
     <div class="app-container">
-        <!-- القائمة الجانبية للشاشات الكبيرة -->
         <sidebar>
             <div class="sidebar-brand">🔒 الخزنة الذكية</div>
             <ul class="nav-links">
@@ -392,7 +387,6 @@
         </sidebar>
 
         <main>
-            <!-- صفحة الرئيسية -->
             <div id="page-home" class="page-section active-page">
                 <div class="header-section">
                     <div>
@@ -437,7 +431,6 @@
                 </div>
             </div>
 
-            <!-- صفحة إدارة الحسابات -->
             <div id="page-accounts" class="page-section">
                 <div class="header-section">
                     <h2>🔑 إدارة وتصفية الحسابات</h2>
@@ -455,22 +448,19 @@
                                     <th>إدارة</th>
                                 </tr>
                             </thead>
-                            <tbody id="accounts-table-body-2">
-                                <!-- سيتم ملؤها تلقائياً -->
-                            </tbody>
+                            <tbody id="accounts-table-body-2"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- صفحة الإعدادات والاستيراد والتصدير -->
             <div id="page-settings" class="page-section">
                 <div class="header-section">
                     <h2>⚙️ الإعدادات والنسخ الاحتياطي</h2>
                 </div>
                 <div class="table-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
                     <h3>استيراد وتصدير البيانات</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">يمكنك تصدير نسخة احتياطية من حساباتك كملف JSON أو استيرادها لاحقاً.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">يمكنك تصدير نسخة احتياطية من حساباتك أو استيرادها لاحقاً.</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-success" onclick="exportData()">📥 تصدير الحسابات (JSON)</button>
                         <label class="btn btn-primary" style="cursor: pointer; margin:0;">
@@ -483,7 +473,6 @@
         </main>
     </div>
 
-    <!-- شريط التنقل السفلي للهواتف -->
     <nav class="bottom-nav">
         <button class="bottom-nav-item active" onclick="switchPage('home')">
             <span>📊</span>
@@ -510,6 +499,15 @@
         let currentAccounts = [];
         let currentPin = "";
 
+        // تسجيل الـ Service Worker لضمان دعم PWA وتثبيت التطبيق
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('SW registered!', reg))
+                    .catch(err => console.log('SW failed!', err));
+            });
+        }
+
         const pinInputs = document.querySelectorAll('.pin-digit');
         pinInputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
@@ -531,14 +529,10 @@
             document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active-page'));
             document.getElementById('page-' + pageId).classList.add('active-page');
 
-            document.querySelectorAll('.nav-link, .bottom-nav-item').forEach(n => n.classList.remove('active'));
-            if(pageId === 'home') {
-                document.querySelectorAll('.bottom-nav-item')[0].classList.add('active');
-            } else if(pageId === 'accounts') {
-                document.querySelectorAll('.bottom-nav-item')[1].classList.add('active');
-            } else if(pageId === 'settings') {
-                document.querySelectorAll('.bottom-nav-item')[3].classList.add('active');
-            }
+            document.querySelectorAll('.bottom-nav-item').forEach(n => n.classList.remove('active'));
+            if(pageId === 'home') document.querySelectorAll('.bottom-nav-item')[0].classList.add('active');
+            else if(pageId === 'accounts') document.querySelectorAll('.bottom-nav-item')[1].classList.add('active');
+            else if(pageId === 'settings') document.querySelectorAll('.bottom-nav-item')[3].classList.add('active');
         }
 
         document.getElementById('pin-submit-btn').addEventListener('click', async () => {
