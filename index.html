@@ -47,7 +47,7 @@
         #pin-screen {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.92);
             backdrop-filter: blur(8px);
             display: flex;
             justify-content: center;
@@ -305,25 +305,23 @@
 </head>
 <body>
 
-    <!-- شاشة الـ PIN والقفل التلقائي -->
     <div id="pin-screen">
         <div class="pin-card">
-            <h2>🔒 الخزنة الذكية</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">أدخل رمز الـ PIN لفتح الخزنة</p>
+            <h2>🔒 الخزنة المشفرة</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">تشفير محلي عسكري (AES-GCM 256-bit)</p>
             <div class="pin-inputs">
                 <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" autofocus>
                 <input type="password" inputmode="numeric" maxlength="1" class="pin-digit">
                 <input type="password" inputmode="numeric" maxlength="1" class="pin-digit">
                 <input type="password" inputmode="numeric" maxlength="1" class="pin-digit">
             </div>
-            <button class="btn btn-primary" style="width: 100%;" id="pin-submit-btn">فتح الخزنة</button>
+            <button class="btn btn-primary" style="width: 100%;" id="pin-submit-btn">فك التشفير والدخول</button>
         </div>
     </div>
 
-    <!-- نافذة إضافة حساب جديد مع المولد الذكي -->
     <div id="add-modal">
         <div class="modal-card">
-            <h3 style="margin-bottom: 16px;">➕ إضافة حساب جديد</h3>
+            <h3 style="margin-bottom: 16px;">➕ إضافة حساب (سيتم تشفيره)</h3>
             <form onsubmit="saveNewAccount(event)">
                 <input type="text" id="acc-name" class="form-control" required placeholder="اسم الحساب (مثال: Google, PayPal)">
                 <input type="text" id="acc-user" class="form-control" required placeholder="اسم المستخدم / البريد الإلكتروني">
@@ -337,7 +335,7 @@
                 
                 <div style="display: flex; gap: 8px; margin-top: 16px;">
                     <button type="button" class="btn" style="background:#e2e8f0; flex:1;" onclick="closeAddModal()">إلغاء</button>
-                    <button type="submit" class="btn btn-primary" style="flex:1;">حفظ ومزامنة</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1;">🔒 تشفير وحفظ</button>
                 </div>
             </form>
         </div>
@@ -354,18 +352,16 @@
         </sidebar>
 
         <main>
-            <!-- شاشة الرئيسية -->
             <div id="page-home" class="page-section active-page">
                 <div class="header-section">
                     <div>
-                        <h1>لوحة التحكم الآمنة</h1>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">تتم حماية شاشتك حالياً بقفل التمكين التلقائي</p>
+                        <h1>لوحة التحكم المشفرة</h1>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">يتم تشفير وفك تشفير بياناتك داخل معالج هاتفك فقط</p>
                     </div>
                     <button class="btn btn-primary" onclick="openAddModal()">+ إضافة حساب جديد</button>
                 </div>
 
-                <!-- شريط البحث السريع -->
-                <input type="text" id="search-input" class="form-control" style="margin-bottom: 20px; border-radius: var(--radius-md);" placeholder="🔍 بحث سريع عن منصة، بريد، أو تصنيف..." oninput="filterAccounts()">
+                <input type="text" id="search-input" class="form-control" style="margin-bottom: 20px; border-radius: var(--radius-md);" placeholder="🔍 بحث سريع في البيانات مفكوكة التشفير..." oninput="filterAccounts()">
 
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -377,8 +373,8 @@
                         <strong id="total-categories">0</strong>
                     </div>
                     <div class="stat-card">
-                        <span>حالة المزامنة السحابية</span>
-                        <strong style="color: #10b981; font-size: 1rem;">متصل وآمن ✓</strong>
+                        <span>حالة التشفير والاتصال</span>
+                        <strong id="connection-status" style="color: #10b981; font-size: 0.95rem;">مشفر محلياً ✓</strong>
                     </div>
                 </div>
 
@@ -395,17 +391,16 @@
                                 </tr>
                             </thead>
                             <tbody id="accounts-table-body">
-                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">جاري تحميل البيانات...</td></tr>
+                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">جاري تحميل وفك تشفير البيانات...</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- شاشة الحسابات -->
             <div id="page-accounts" class="page-section">
                 <div class="header-section">
-                    <h2>🔑 كافة الحسابات</h2>
+                    <h2>🔑 كافة الحسابات المشفرة</h2>
                     <button class="btn btn-primary" onclick="openAddModal()">+ إضافة حساب</button>
                 </div>
                 <div class="table-card">
@@ -426,18 +421,17 @@
                 </div>
             </div>
 
-            <!-- شاشة الإعدادات -->
             <div id="page-settings" class="page-section">
                 <div class="header-section">
                     <h2>⚙️ الإعدادات والنسخ الاحتياطي</h2>
                 </div>
                 <div class="table-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
                     <h3>استيراد وتصدير البيانات</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">تصدير واستيراد نسخة احتياطية من حساباتك بصيغة JSON آمنة.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">تصدير واستيراد نسخة احتياطية من حساباتك (ستكون البيانات داخل الملف مشفرة تماماً لحمايتك).</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-success" onclick="exportData()">📥 تصدير الحسابات (JSON)</button>
+                        <button class="btn btn-success" onclick="exportData()">📥 تصدير الحسابات المشفرة</button>
                         <label class="btn btn-primary" style="cursor: pointer; margin:0;">
-                            📤 استيراد الحسابات
+                            📤 استيراد حسابات
                             <input type="file" accept=".json" style="display: none;" onchange="importData(event)">
                         </label>
                     </div>
@@ -446,7 +440,6 @@
         </main>
     </div>
 
-    <!-- الشريط السفلي للهواتف -->
     <nav class="bottom-nav">
         <button class="bottom-nav-item active" onclick="switchPage('home')">
             <span>📊</span><span>الرئيسية</span>
@@ -466,54 +459,104 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRA_WuLm4rRNJDqNen7A1joku9AHlC3GOWeVIPzVDpXxaWhmMWDFpnnKKG88if43ho3A/exec";
-        let currentAccounts = [];
+        let currentAccounts = []; // الحسابات بالشكل المفكوك التشفير (تعرض في الواجهة فقط)
         let currentPin = "";
+        let cryptoKey = null; // مفتاح التشفير العسكري المستخرج من الـ PIN
         let inactivityTimer;
 
-        // 1. تسجيل الـ Service Worker
+        // ==========================================
+        // 1. محرك التشفير المحلي (CryptoEngine AES-GCM)
+        // ==========================================
+        const CryptoEngine = {
+            // ملح تشفير ثابت (Salt) لضمان توليد نفس المفتاح من نفس الـ PIN في كل مرة وعلى أي جهاز
+            salt: new Uint8Array([45, 78, 12, 89, 101, 33, 67, 90, 23, 56, 88, 99, 11, 22, 33, 44]),
+
+            // تحويل رمز الـ PIN إلى مفتاح AES-GCM 256-bit عبر خوارزمية PBKDF2
+            async deriveKey(pin) {
+                const enc = new TextEncoder();
+                const keyMaterial = await crypto.subtle.importKey(
+                    "raw", enc.encode(pin), { name: "PBKDF2" }, false, ["deriveKey"]
+                );
+                return await crypto.subtle.deriveKey(
+                    { name: "PBKDF2", salt: this.salt, iterations: 100000, hash: "SHA-256" },
+                    keyMaterial,
+                    { name: "AES-GCM", length: 256 },
+                    false,
+                    ["encrypt", "decrypt"]
+                );
+            },
+
+            // تشفير نص عادي وإرجاعه بصيغة Base64 مسبوقاً بـ ENC:
+            async encrypt(text, key) {
+                if (!text || text === '-' || text.startsWith("ENC:")) return text;
+                try {
+                    const enc = new TextEncoder();
+                    const iv = crypto.getRandomValues(new Uint8Array(12)); // IV عشوائي لكل عملية تشفير
+                    const ciphertext = await crypto.subtle.encrypt(
+                        { name: "AES-GCM", iv: iv }, key, enc.encode(text)
+                    );
+                    const combined = new Uint8Array(iv.length + ciphertext.byteLength);
+                    combined.set(iv, 0);
+                    combined.set(new Uint8Array(ciphertext), iv.length);
+                    return "ENC:" + btoa(String.fromCharCode(...combined));
+                } catch (e) {
+                    console.error("خطأ بالتشفير", e);
+                    return text;
+                }
+            },
+
+            // فك تشفير نص مشفر (مع التوافق العكسي مع الحسابات القديمة غير المشفرة)
+            async decrypt(cipherText, key) {
+                if (!cipherText || !cipherText.startsWith("ENC:")) return cipherText; // نص قديم غير مشفر
+                try {
+                    const base64 = cipherText.replace("ENC:", "");
+                    const combined = new Uint8Array(atob(base64).split('').map(c => c.charCodeAt(0)));
+                    const iv = combined.slice(0, 12);
+                    const data = combined.slice(12);
+                    const decrypted = await crypto.subtle.decrypt(
+                        { name: "AES-GCM", iv: iv }, key, data
+                    );
+                    return new TextDecoder().decode(decrypted);
+                } catch (e) {
+                    console.error("خطأ بفك التشفير", e);
+                    return "⚠️ خطأ فك تشفير (PIN مختلف؟)";
+                }
+            }
+        };
+
+        // ==========================================
+        // 2. تسجيل الـ Service Worker ونظام الخمول
+        // ==========================================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('SW registered successfully!', reg))
-                    .catch(err => console.log('SW registration failed:', err));
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fail:', err));
             });
         }
 
-        // 2. نظام القفل التلقائي عند الخمول (Auto-Lock)
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
-            // ضبط المؤقت للقفل بعد 3 دقائق (180,000 مللي ثانية) من عدم النشاط
             if (document.getElementById('pin-screen').style.display === 'none') {
-                inactivityTimer = setTimeout(lockVault, 180000);
+                inactivityTimer = setTimeout(lockVault, 180000); // قفل بعد 3 دقائق خمول
             }
         }
 
         function lockVault() {
             document.getElementById('pin-screen').style.display = 'flex';
             currentPin = "";
+            cryptoKey = null; // مسح مفتاح التشفير من الذاكرة فوراً للحماية
             document.querySelectorAll('.pin-digit').forEach(i => i.value = "");
-            showToast("🔒 تم قفل الخزنة تلقائياً للحماية");
+            showToast("🔒 تم قفل الخزنة ومسح مفتاح التشفير من الذاكرة");
         }
 
-        // مراقبة نشاط المستخدم والتبديل بين التطبيقات
-        ['mousemove', 'keydown', 'touchstart', 'click'].forEach(evt => {
-            window.addEventListener(evt, resetInactivityTimer);
-        });
+        ['mousemove', 'keydown', 'touchstart', 'click'].forEach(evt => window.addEventListener(evt, resetInactivityTimer));
         document.addEventListener('visibilitychange', () => {
-            if (document.hidden && document.getElementById('pin-screen').style.display === 'none') {
-                lockVault(); // قفل فوري عند الخروج من التطبيق أو تصغيره
-            }
+            if (document.hidden && document.getElementById('pin-screen').style.display === 'none') lockVault();
         });
 
-        // 3. إدارة إدخال أرقام الـ PIN
         const pinInputs = document.querySelectorAll('.pin-digit');
         pinInputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                if (e.target.value && index < pinInputs.length - 1) pinInputs[index + 1].focus();
-            });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && !input.value && index > 0) pinInputs[index - 1].focus();
-            });
+            input.addEventListener('input', (e) => { if (e.target.value && index < pinInputs.length - 1) pinInputs[index + 1].focus(); });
+            input.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !input.value && index > 0) pinInputs[index - 1].focus(); });
         });
 
         function showToast(msg) {
@@ -532,48 +575,82 @@
             else if(pageId === 'settings') document.querySelectorAll('.bottom-nav-item')[3].classList.add('active');
         }
 
+        // ==========================================
+        // 3. الدخول وفك التشفير ودعم العمل دون اتصال
+        // ==========================================
         document.getElementById('pin-submit-btn').addEventListener('click', async () => {
             let pin = Array.from(pinInputs).map(i => i.value).join('');
             if(pin.length < 4) return showToast("الرجاء إدخال 4 خانات");
             currentPin = pin;
 
             try {
-                showToast("جاري التحقق والاتصال بالسحابة...");
-                let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "get_accounts", pin }) });
-                let result = await res.json();
+                showToast("🔐 جاري اشتقاق المفتاح وفك التشفير...");
+                cryptoKey = await CryptoEngine.deriveKey(pin); // توليد مفتاح التشفير من الـ PIN
 
-                if (result.status === "setup_required") {
-                    await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "setup_pin", newPin: pin }) });
-                    document.getElementById('pin-screen').style.display = 'none';
-                    currentAccounts = [];
-                    renderTables(currentAccounts);
-                    resetInactivityTimer();
-                } else if (result.status === "success") {
-                    document.getElementById('pin-screen').style.display = 'none';
-                    showToast("🔓 تم فتح الخزنة بنجاح");
-                    currentAccounts = result.accounts || [];
-                    renderTables(currentAccounts);
-                    resetInactivityTimer();
-                } else {
-                    showToast(result.message || "رمز الـ PIN غير صحيح");
+                let rawAccounts = [];
+                try {
+                    // محاولة الجلب من السحابة
+                    let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "get_accounts", pin }) });
+                    let result = await res.json();
+                    
+                    if (result.status === "setup_required") {
+                        await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "setup_pin", newPin: pin }) });
+                        rawAccounts = [];
+                    } else if (result.status === "success") {
+                        rawAccounts = result.accounts || [];
+                        // حفظ نسخة مشفرة في الهاتف للعمل دون اتصال
+                        localStorage.setItem('offline_encrypted_vault', JSON.stringify(rawAccounts));
+                        document.getElementById('connection-status').textContent = "متصل ومشفر ✓";
+                        document.getElementById('connection-status').style.color = "#10b981";
+                    } else {
+                        return showToast(result.message || "رمز الـ PIN غير صحيح");
+                    }
+                } catch (networkError) {
+                    // فشل الاتصال بالإنترنت -> اللجوء للنسخة المحلية دون اتصال
+                    console.warn("تعذر الاتصال بالسحابة، جاري الفتح دون اتصال...");
+                    const cached = localStorage.getItem('offline_encrypted_vault');
+                    if (cached) {
+                        rawAccounts = JSON.parse(cached);
+                        document.getElementById('connection-status').textContent = "وضع دون اتصال (محلي) ⚠️";
+                        document.getElementById('connection-status').style.color = "#f59e0b";
+                        showToast("🌐 تعمل الآن بالوضع المحلي دون اتصال");
+                    } else {
+                        throw networkError;
+                    }
                 }
+
+                // فك تشفير كافة الحسابات محلياً لعرضها في الشاشة
+                currentAccounts = await Promise.all(rawAccounts.map(async acc => ({
+                    name: acc.name || acc.title,
+                    user: await CryptoEngine.decrypt(acc.user || acc.username || acc.email, cryptoKey),
+                    pass: await CryptoEngine.decrypt(acc.pass || acc.password, cryptoKey),
+                    category: acc.category || acc.cat
+                })));
+
+                document.getElementById('pin-screen').style.display = 'none';
+                showToast("🔓 تم فك تشفير وفتح الخزنة بنجاح");
+                renderTables(currentAccounts);
+                resetInactivityTimer();
+
             } catch (e) {
-                showToast("خطأ في الاتصال بالخادم");
+                showToast("خطأ في الاتصال أو فك التشفير");
             }
         });
 
-        // 4. عرض الجداول مع نظام إخفاء كلمات المرور والنسخ السريع
+        // ==========================================
+        // 4. عرض الجداول والحماية
+        // ==========================================
         function renderTables(accountsToRender) {
             const renderRows = (accounts) => {
                 if (!accounts || accounts.length === 0) {
                     return `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">لا توجد حسابات مطابقة</td></tr>`;
                 }
                 return accounts.map((acc, index) => {
-                    const pass = acc.pass || acc.password || '-';
+                    const pass = acc.pass || '-';
                     return `
                     <tr>
-                        <td><strong>${acc.name || acc.title || 'بدون اسم'}</strong></td>
-                        <td>${acc.user || acc.username || acc.email || '-'}</td>
+                        <td><strong>${acc.name || 'بدون اسم'}</strong></td>
+                        <td>${acc.user || '-'}</td>
                         <td>
                             <div class="pass-cell">
                                 <span id="pass-text-${index}" data-pass="${pass}">••••••••</span>
@@ -581,7 +658,7 @@
                                 <button class="btn btn-sm" style="background:#e0f2fe; color:#0369a1;" onclick="copyPassword('${pass}')" title="نسخ سريع">📋 نسخ</button>
                             </div>
                         </td>
-                        <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:6px; font-size:0.85rem;">${acc.category || acc.cat || 'عام'}</span></td>
+                        <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:6px; font-size:0.85rem;">${acc.category || 'عام'}</span></td>
                         <td><button class="btn btn-sm" style="background: #fee2e2; color: #dc2626;" onclick="deleteAccount(${index})">حذف</button></td>
                     </tr>
                     `;
@@ -590,60 +667,48 @@
 
             document.getElementById('accounts-table-body').innerHTML = renderRows(accountsToRender);
             document.getElementById('accounts-table-body-2').innerHTML = renderRows(accountsToRender);
-
             document.getElementById('total-accounts').textContent = currentAccounts.length;
-            const cats = new Set(currentAccounts.map(a => a.category || a.cat || 'عام'));
+            const cats = new Set(currentAccounts.map(a => a.category || 'عام'));
             document.getElementById('total-categories').textContent = cats.size;
         }
 
-        // إظهار وإخفاء كلمة المرور برمجياً
         function toggleShow(index) {
             const span = document.getElementById(`pass-text-${index}`);
-            if (span.textContent === '••••••••') {
-                span.textContent = span.getAttribute('data-pass');
-            } else {
-                span.textContent = '••••••••';
-            }
+            span.textContent = (span.textContent === '••••••••') ? span.getAttribute('data-pass') : '••••••••';
         }
 
-        // النسخ السريع مع تفريغ الحافظة التلقائي بعد 30 ثانية
         function copyPassword(pass) {
-            if (!pass || pass === '-') return showToast("لا توجد كلمة مرور لنسخها");
+            if (!pass || pass === '-' || pass.startsWith("⚠️")) return showToast("لا توجد كلمة مرور صالحة لنسخها");
             navigator.clipboard.writeText(pass).then(() => {
-                showToast("📋 تم النسخ! سيتم تفريغ الحافظة بعد 30 ثانية للحماية");
-                setTimeout(() => {
-                    navigator.clipboard.writeText('');
-                    console.log("تم تفريغ الحافظة تلقائياً");
-                }, 30000);
-            }).catch(() => showToast("فشل النسخ، يرجى السماح للمتصفح بالوصول للحافظة"));
+                showToast("📋 تم النسخ! سيتم تفريغ الحافظة بعد 30 ثانية");
+                setTimeout(() => navigator.clipboard.writeText(''), 30000);
+            }).catch(() => showToast("فشل النسخ"));
         }
 
-        // 5. نظام الفلترة والبحث الفوري (Real-Time Search)
         function filterAccounts() {
             const query = document.getElementById('search-input').value.toLowerCase();
             const filtered = currentAccounts.filter(acc => {
-                const name = (acc.name || '').toLowerCase();
-                const user = (acc.user || '').toLowerCase();
-                const cat = (acc.category || '').toLowerCase();
-                return name.includes(query) || user.includes(query) || cat.includes(query);
+                return (acc.name||'').toLowerCase().includes(query) || 
+                       (acc.user||'').toLowerCase().includes(query) || 
+                       (acc.category||'').toLowerCase().includes(query);
             });
             renderTables(filtered);
         }
 
-        // 6. مولد كلمات المرور الذكية
         function generatePassword() {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
             let pass = "";
-            for (let i = 0; i < 16; i++) {
-                pass += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
+            for (let i = 0; i < 16; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
             document.getElementById('acc-pass').value = pass;
-            showToast("🎲 تم توليد كلمة مرور قوية (16 حرف)");
+            showToast("🎲 تم توليد كلمة مرور قوية");
         }
 
         function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
         function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; }
 
+        // ==========================================
+        // 5. التشفير قبل الحفظ في السحابة
+        // ==========================================
         async function saveNewAccount(e) {
             e.preventDefault();
             const newAcc = {
@@ -654,51 +719,69 @@
             };
 
             currentAccounts.push(newAcc);
-            try {
-                showToast("جاري الحفظ والمزامنة السحابية...");
-                let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "save_accounts", pin: currentPin, accounts: currentAccounts }) });
-                let result = await res.json();
-                if (result.status === "success") {
-                    showToast("✅ تم حفظ الحساب بنجاح!");
-                    closeAddModal();
-                    document.getElementById('search-input').value = "";
-                    renderTables(currentAccounts);
-                } else {
-                    showToast("خطأ في الحفظ");
-                    currentAccounts.pop();
-                }
-            } catch (e) {
-                showToast("خطأ بالاتصال");
-                currentAccounts.pop();
-            }
+            await syncEncryptedVault("جاري التشفير المحلي والحفظ بالسحابة...");
+            closeAddModal();
+            document.getElementById('search-input').value = "";
         }
 
         async function deleteAccount(index) {
-            if(!confirm("هل أنت متأكد من حذف هذا الحساب نهائياً؟")) return;
-            let removed = currentAccounts.splice(index, 1);
+            if(!confirm("هل أنت متأكد من حذف هذا الحساب؟")) return;
+            currentAccounts.splice(index, 1);
+            await syncEncryptedVault("جاري تحديث الخزنة المشفرة...");
+        }
+
+        // دالة مركزية لتشفير كامل الخزنة قبل إرسالها لـ Google Script
+        async function syncEncryptedVault(loadingMessage) {
             try {
-                let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "save_accounts", pin: currentPin, accounts: currentAccounts }) });
+                showToast(loadingMessage);
+                
+                // تشفير اسم المستخدم وكلمة المرور لكل حساب في الهاتف
+                const encryptedPayload = await Promise.all(currentAccounts.map(async acc => ({
+                    name: acc.name,
+                    user: await CryptoEngine.encrypt(acc.user, cryptoKey),
+                    pass: await CryptoEngine.encrypt(acc.pass, cryptoKey),
+                    category: acc.category
+                })));
+
+                // حفظ النسخة المشفرة محلياً تحسباً لانقطاع النت
+                localStorage.setItem('offline_encrypted_vault', JSON.stringify(encryptedPayload));
+
+                // إرسال النسخة المشفرة إلى سحابة Google
+                let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "save_accounts", pin: currentPin, accounts: encryptedPayload }) });
                 let result = await res.json();
-                if(result.status === "success") {
-                    showToast("🗑️ تم الحذف بنجاح");
+                if (result.status === "success") {
+                    showToast("🔒 تم تشفير البيانات وحفظها بنجاح!");
                     renderTables(currentAccounts);
                 } else {
-                    currentAccounts.splice(index, 0, removed[0]);
+                    showToast("خطأ في المزامنة السحابية");
                 }
             } catch (e) {
-                currentAccounts.splice(index, 0, removed[0]);
+                showToast("⚠️ تم الحفظ محلياً (تعذر الاتصال بالسحابة)");
+                renderTables(currentAccounts);
             }
         }
 
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentAccounts, null, 2));
+        // ==========================================
+        // 6. التصدير والاستيراد المشفر
+        // ==========================================
+        async function exportData() {
+            showToast("جاري تجهيز النسخة المشفرة...");
+            // نقوم بتصدير النسخة المشفرة لكي يكون ملف الـ JSON نفسه آمناً لو وقع بصر أحد عليه
+            const encryptedExport = await Promise.all(currentAccounts.map(async acc => ({
+                name: acc.name,
+                user: await CryptoEngine.encrypt(acc.user, cryptoKey),
+                pass: await CryptoEngine.encrypt(acc.pass, cryptoKey),
+                category: acc.category
+            })));
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(encryptedExport, null, 2));
             const dlAnchor = document.createElement('a');
             dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", "secure_vault_backup.json");
+            dlAnchor.setAttribute("download", "encrypted_vault_backup.json");
             document.body.appendChild(dlAnchor);
             dlAnchor.click();
             dlAnchor.remove();
-            showToast("📥 تم تصدير النسخة الاحتياطية بنجاح");
+            showToast("📥 تم تصدير النسخة المشفرة بنجاح");
         }
 
         function importData(event) {
@@ -709,18 +792,20 @@
                 try {
                     const imported = JSON.parse(e.target.result);
                     if(Array.isArray(imported)) {
-                        currentAccounts = imported;
-                        let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "save_accounts", pin: currentPin, accounts: currentAccounts }) });
-                        let result = await res.json();
-                        if(result.status === "success") {
-                            renderTables(currentAccounts);
-                            showToast("📤 تم استيراد ومزامنة الحسابات بنجاح!");
-                        }
+                        showToast("جاري استيراد وفك تشفير الملف...");
+                        // فك تشفير الملف المستورد وعرضه
+                        currentAccounts = await Promise.all(imported.map(async acc => ({
+                            name: acc.name || acc.title,
+                            user: await CryptoEngine.decrypt(acc.user || acc.username || acc.email, cryptoKey),
+                            pass: await CryptoEngine.decrypt(acc.pass || acc.password, cryptoKey),
+                            category: acc.category || acc.cat
+                        })));
+                        await syncEncryptedVault("جاري مزامنة الحسابات المستوردة...");
                     } else {
                         showToast("ملف غير صالح");
                     }
                 } catch(err) {
-                    showToast("فشل قراءة الملف");
+                    showToast("فشل قراءة أو فك تشفير الملف");
                 }
             };
             reader.readAsText(file);
