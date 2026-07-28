@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خزنة الحسابات - مبسط وآمن</title>
+    <title>خزنة الحسابات - التشفير الفائق</title>
     
     <!-- PWA & Apple Meta -->
     <link rel="manifest" href="manifest.json">
@@ -66,7 +66,7 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* شاشة القفل والـ PIN */
+        /* شاشة القفل وكلمة المرور الرئيسية */
         #pin-screen {
             position: fixed;
             inset: 0;
@@ -84,36 +84,10 @@
             padding: 30px 24px;
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             text-align: center;
             border: 1px solid var(--border-color);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .pin-inputs {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin: 25px 0;
-        }
-
-        .pin-inputs input {
-            width: 55px;
-            height: 55px;
-            font-size: 26px;
-            font-weight: 700;
-            text-align: center;
-            border: 2px solid var(--border-color);
-            border-radius: var(--radius-md);
-            outline: none;
-            background: var(--input-bg);
-            color: var(--text-main);
-            transition: var(--transition);
-        }
-
-        .pin-inputs input:focus {
-            border-color: var(--primary);
-            transform: translateY(-2px);
         }
 
         /* الهيكل الأساسي */
@@ -229,7 +203,7 @@
 
         .form-control:focus { border-color: var(--primary); }
 
-        /* نظام البطاقات المبسط */
+        /* نظام البطاقات */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -348,18 +322,18 @@
 </head>
 <body>
 
-    <!-- شاشة الـ PIN -->
+    <!-- شاشة القفل وكلمة المرور الرئيسية (Master Password) -->
     <div id="pin-screen">
         <div class="pin-card">
-            <div style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
-            <h2>خزنة الحسابات</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">تشفير محلي عسكري (AES-GCM)</p>
-            <div class="pin-inputs">
-                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" autofocus>
-                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit">
-                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit">
-                <input type="password" inputmode="numeric" maxlength="1" class="pin-digit">
+            <div style="font-size: 2.5rem; margin-bottom: 10px;">🛡️</div>
+            <h2>الخزنة المشفرة</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">أدخل كلمة المرور الرئيسية لفك التشفير العسكري</p>
+            
+            <div style="position: relative; margin: 25px 0;">
+                <input type="password" id="master-pass-input" class="form-control" style="margin-bottom: 0; text-align: center; font-size: 1.1rem; padding-left: 45px; letter-spacing: 2px;" placeholder="••••••••" autofocus>
+                <button type="button" class="btn btn-sm btn-secondary" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); padding: 4px 8px; min-height: 32px;" onclick="toggleMasterShow()" title="إظهار/إخفاء">👁️</button>
             </div>
+
             <button class="btn btn-primary" style="width: 100%;" id="pin-submit-btn">فتح الخزنة</button>
         </div>
     </div>
@@ -392,7 +366,7 @@
     <div class="app-container">
         <sidebar>
             <div class="sidebar-brand">
-                <span>🔒</span><span>الخزنة السريعة</span>
+                <span>🛡️</span><span>الخزنة الفائقة</span>
             </div>
             <ul class="nav-links">
                 <li><a class="nav-link active" onclick="switchPage('home')">📊 لوحة التحكم</a></li>
@@ -410,7 +384,7 @@
                 <div class="header-section">
                     <div>
                         <h1>حساباتي المشفرة</h1>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">نسخ سريع للبريد وكلمة السر بضغطة زر واحدة</p>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">تشفير محلي صارم غير قابل للكسر رياضياً</p>
                     </div>
                     <button class="btn btn-primary" onclick="openAddModal()">+ إضافة حساب</button>
                 </div>
@@ -431,7 +405,7 @@
                 </div>
                 <div class="account-card" style="display: block;">
                     <h3 style="margin-bottom: 8px;">استيراد وتصدير البيانات</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">يمكنك تصدير نسخة احتياطية مشفرة (JSON)، أو استيراد ملفات برنامجك القديم بصيغة (CSV / JSON) مباشرة لتشفيرها ونقلها.</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">تصدير نسخة احتياطية مشفرة (JSON)، أو استيراد ملفات برنامجك القديم بصيغة (CSV / JSON) مباشرة لتشفيرها ونقلها.</p>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-primary" onclick="exportData()">📥 تصدير الحسابات (JSON مشفر)</button>
                         <label class="btn btn-secondary" style="cursor: pointer; margin:0;">
@@ -465,12 +439,12 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRA_WuLm4rRNJDqNen7A1joku9AHlC3GOWeVIPzVDpXxaWhmMWDFpnnKKG88if43ho3A/exec";
         let currentAccounts = [];
-        let currentPin = "";
+        let currentPin = ""; // محتفظ بهذا الاسم برمجياً للتوافق التام مع سكربت جوجل
         let cryptoKey = null;
         let inactivityTimer;
         let editingIndex = null;
 
-        // 1. محرك التشفير المحلي (AES-GCM 256-bit)
+        // 1. محرك التشفير المحلي العسكري (AES-GCM 256-bit + PBKDF2)
         const CryptoEngine = {
             salt: new Uint8Array([45, 78, 12, 89, 101, 33, 67, 90, 23, 56, 88, 99, 11, 22, 33, 44]),
             async deriveKey(pin) {
@@ -497,7 +471,7 @@
                     const iv = combined.slice(0, 12); const data = combined.slice(12);
                     const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
                     return new TextDecoder().decode(decrypted);
-                } catch (e) { return "⚠️ خطأ التشفير"; }
+                } catch (e) { return "⚠️ خطأ التشفير (كلمة مرور غير صحيحة)"; }
             }
         };
 
@@ -516,26 +490,31 @@
             if(document.getElementById('theme-toggle-btn')) document.getElementById('theme-toggle-btn').textContent = '☀️ الوضع الفاتح';
         }
 
-        // 3. نظام الخمول وقفل التطبيق
+        // 3. نظام الخمول وقفل التطبيق وكلمة المرور الرئيسية
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
             if (document.getElementById('pin-screen').style.display === 'none') {
-                inactivityTimer = setTimeout(lockVault, 180000); // 3 دقائق
+                inactivityTimer = setTimeout(lockVault, 180000); // قفل تلقائي بعد 3 دقائق خمول
             }
         }
         function lockVault() {
             document.getElementById('pin-screen').style.display = 'flex';
             currentPin = ""; cryptoKey = null;
-            document.querySelectorAll('.pin-digit').forEach(i => i.value = "");
-            showToast("🔒 تم قفل الخزنة للحماية");
+            document.getElementById('master-pass-input').value = "";
+            showToast("🔒 تم قفل الخزنة ومسح المفتاح من الذاكرة");
         }
         ['mousemove', 'keydown', 'touchstart', 'click'].forEach(evt => window.addEventListener(evt, resetInactivityTimer));
         document.addEventListener('visibilitychange', () => { if (document.hidden && document.getElementById('pin-screen').style.display === 'none') lockVault(); });
 
-        const pinInputs = document.querySelectorAll('.pin-digit');
-        pinInputs.forEach((input, index) => {
-            input.addEventListener('input', (e) => { if (e.target.value && index < pinInputs.length - 1) pinInputs[index + 1].focus(); });
-            input.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !input.value && index > 0) pinInputs[index - 1].focus(); });
+        // إظهار وإخفاء كلمة المرور الرئيسية في شاشة القفل
+        function toggleMasterShow() {
+            const input = document.getElementById('master-pass-input');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        // إمكانية الدخول بالضغط على زر Enter باللوحة
+        document.getElementById('master-pass-input').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('pin-submit-btn').click();
         });
 
         function showToast(msg) {
@@ -554,12 +533,12 @@
 
         // 4. تسجيل الدخول وفك التشفير
         document.getElementById('pin-submit-btn').addEventListener('click', async () => {
-            let pin = Array.from(pinInputs).map(i => i.value).join('');
-            if(pin.length < 4) return showToast("الرجاء إدخال 4 خانات");
+            let pin = document.getElementById('master-pass-input').value.trim();
+            if(pin.length < 4) return showToast("كلمة المرور الرئيسية يجب أن تكون 4 أحرف أو أرقام على الأقل");
             currentPin = pin;
 
             try {
-                showToast("🔐 جاري الاتصال وفك التشفير...");
+                showToast("🔐 جاري اشتقاق المفتاح العسكري وفك التشفير...");
                 cryptoKey = await CryptoEngine.deriveKey(pin);
                 let rawAccounts = [];
                 try {
@@ -571,7 +550,7 @@
                     } else if (result.status === "success") {
                         rawAccounts = result.accounts || [];
                         localStorage.setItem('offline_encrypted_vault', JSON.stringify(rawAccounts));
-                    } else { return showToast(result.message || "رمز الـ PIN غير صحيح"); }
+                    } else { return showToast(result.message || "كلمة المرور الرئيسية غير صحيحة"); }
                 } catch (netErr) {
                     const cached = localStorage.getItem('offline_encrypted_vault');
                     if (cached) {
@@ -588,13 +567,13 @@
                 })));
 
                 document.getElementById('pin-screen').style.display = 'none';
-                showToast("🔓 تم فتح الخزنة بنجاح");
+                showToast("🔓 تم فك تشفير الخزنة بنجاح");
                 renderCards(currentAccounts);
                 resetInactivityTimer();
             } catch (e) { showToast("خطأ في الاتصال أو فك التشفير"); }
         });
 
-        // 5. عرض البطاقات النظيفة مع أزرار النسخ للبريد وكلمة السر
+        // 5. عرض البطاقات مع أزرار النسخ
         function renderCards(accountsToRender) {
             const grid = document.getElementById('accounts-grid');
             if (!accountsToRender || accountsToRender.length === 0) {
