@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خزنة الحسابات - التشفير الفائق</title>
+    <title>خزنة الحسابات - التشفير الذكي</title>
     
     <!-- PWA & Apple Meta -->
     <link rel="manifest" href="manifest.json">
@@ -66,7 +66,7 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* شاشة القفل وكلمة المرور الرئيسية */
+        /* شاشة القفل والـ PIN */
         #pin-screen {
             position: fixed;
             inset: 0;
@@ -84,10 +84,36 @@
             padding: 30px 24px;
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             text-align: center;
             border: 1px solid var(--border-color);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .pin-inputs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .pin-inputs input {
+            width: 55px;
+            height: 55px;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            outline: none;
+            background: var(--input-bg);
+            color: var(--text-main);
+            transition: var(--transition);
+        }
+
+        .pin-inputs input:focus {
+            border-color: var(--primary);
+            transform: translateY(-2px);
         }
 
         /* الهيكل الأساسي */
@@ -197,13 +223,36 @@
             background: var(--input-bg);
             color: var(--text-main);
             outline: none;
-            margin-bottom: 14px;
             transition: var(--transition);
         }
 
         .form-control:focus { border-color: var(--primary); }
 
-        /* نظام البطاقات */
+        /* أشرطة الفلترة الذكية */
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            margin-bottom: 24px;
+            scrollbar-width: none;
+        }
+        .filter-pills::-webkit-scrollbar { display: none; }
+        .pill {
+            padding: 8px 16px;
+            border-radius: 50px;
+            background: var(--input-bg);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        .pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* نظام البطاقات المبسط */
         .cards-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -322,18 +371,19 @@
 </head>
 <body>
 
-    <!-- شاشة القفل وكلمة المرور الرئيسية (Master Password) -->
+    <!-- شاشة الـ PIN (مضبوطة على text لتدعم الأحرف والأرقام معاً) -->
     <div id="pin-screen">
         <div class="pin-card">
-            <div style="font-size: 2.5rem; margin-bottom: 10px;">🛡️</div>
-            <h2>الخزنة المشفرة</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">أدخل كلمة المرور الرئيسية لفك التشفير العسكري</p>
-            
-            <div style="position: relative; margin: 25px 0;">
-                <input type="password" id="master-pass-input" class="form-control" style="margin-bottom: 0; text-align: center; font-size: 1.1rem; padding-left: 45px; letter-spacing: 2px;" placeholder="••••••••" autofocus>
-                <button type="button" class="btn btn-sm btn-secondary" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); padding: 4px 8px; min-height: 32px;" onclick="toggleMasterShow()" title="إظهار/إخفاء">👁️</button>
+            <div style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
+            <h2>خزنة الحسابات</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">أدخل 4 أحرف أو أرقام لفك التشفير العسكري</p>
+            <div class="pin-inputs">
+                <!-- استخدام inputmode="text" لفتح الكيبورد الكامل (أحرف + أرقام) -->
+                <input type="password" inputmode="text" maxlength="1" class="pin-digit" autofocus>
+                <input type="password" inputmode="text" maxlength="1" class="pin-digit">
+                <input type="password" inputmode="text" maxlength="1" class="pin-digit">
+                <input type="password" inputmode="text" maxlength="1" class="pin-digit">
             </div>
-
             <button class="btn btn-primary" style="width: 100%;" id="pin-submit-btn">فتح الخزنة</button>
         </div>
     </div>
@@ -344,10 +394,10 @@
             <h3 id="modal-title" style="margin-bottom: 18px;">➕ إضافة حساب جديد</h3>
             <form onsubmit="saveAccount(event)">
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">اسم المنصة (مثال: Google, PayPal) *</label>
-                <input type="text" id="acc-name" class="form-control" required placeholder="اسم المنصة أو التطبيق">
+                <input type="text" id="acc-name" class="form-control" required placeholder="اسم المنصة أو التطبيق" style="margin-bottom: 14px;">
                 
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">البريد الإلكتروني *</label>
-                <input type="email" id="acc-email" class="form-control" required placeholder="example@gmail.com" style="text-align: left; direction: ltr;">
+                <input type="email" id="acc-email" class="form-control" required placeholder="example@gmail.com" style="text-align: left; direction: ltr; margin-bottom: 14px;">
                 
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">كلمة السر *</label>
                 <div style="display: flex; gap: 8px; margin-bottom: 14px;">
@@ -366,7 +416,7 @@
     <div class="app-container">
         <sidebar>
             <div class="sidebar-brand">
-                <span>🛡️</span><span>الخزنة الفائقة</span>
+                <span>🔒</span><span>الخزنة السريعة</span>
             </div>
             <ul class="nav-links">
                 <li><a class="nav-link active" onclick="switchPage('home')">📊 لوحة التحكم</a></li>
@@ -383,14 +433,28 @@
             <div id="page-home" class="page-section active-page">
                 <div class="header-section">
                     <div>
-                        <h1>حساباتي المشفرة</h1>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">تشفير محلي صارم غير قابل للكسر رياضياً</p>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <h1>حساباتي المشفرة</h1>
+                            <!-- عداد الحسابات الأنيق -->
+                            <span id="total-accounts" style="background: rgba(79, 70, 229, 0.15); color: var(--primary); padding: 4px 14px; border-radius: 50px; font-size: 0.95rem; font-weight: 700;">0 حساب</span>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">نسخ سريع للبريد وكلمة السر بضغطة زر واحدة</p>
                     </div>
                     <button class="btn btn-primary" onclick="openAddModal()">+ إضافة حساب</button>
                 </div>
 
                 <!-- شريط البحث السريع -->
-                <input type="text" id="search-input" class="form-control" style="border-radius: 50px; padding: 14px 20px; margin-bottom: 24px;" placeholder="🔍 بحث سريع عن منصة أو بريد إلكتروني..." oninput="filterAccounts()">
+                <input type="text" id="search-input" class="form-control" style="border-radius: 50px; padding: 14px 20px; margin-bottom: 16px;" placeholder="🔍 بحث سريع عن منصة أو بريد إلكتروني..." oninput="filterAccounts()">
+
+                <!-- أشرطة الفلترة الذكية -->
+                <div class="filter-pills">
+                    <button class="pill active" onclick="setFilter('all', this)">🚀 الكل</button>
+                    <button class="pill" onclick="setFilter('gmail', this)">Gmail</button>
+                    <button class="pill" onclick="setFilter('facebook', this)">Facebook</button>
+                    <button class="pill" onclick="setFilter('انستغرام', this)">انستغرام</button>
+                    <button class="pill" onclick="setFilter('تيك توك', this)">تيك توك</button>
+                    <button class="pill" onclick="setFilter('تويتر', this)">تويتر</button>
+                </div>
 
                 <!-- حاوية البطاقات -->
                 <div class="cards-grid" id="accounts-grid">
@@ -439,12 +503,13 @@
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRA_WuLm4rRNJDqNen7A1joku9AHlC3GOWeVIPzVDpXxaWhmMWDFpnnKKG88if43ho3A/exec";
         let currentAccounts = [];
-        let currentPin = ""; // محتفظ بهذا الاسم برمجياً للتوافق التام مع سكربت جوجل
+        let currentPin = "";
         let cryptoKey = null;
         let inactivityTimer;
         let editingIndex = null;
+        let activeFilterKeyword = 'all';
 
-        // 1. محرك التشفير المحلي العسكري (AES-GCM 256-bit + PBKDF2)
+        // 1. محرك التشفير المحلي (AES-GCM 256-bit)
         const CryptoEngine = {
             salt: new Uint8Array([45, 78, 12, 89, 101, 33, 67, 90, 23, 56, 88, 99, 11, 22, 33, 44]),
             async deriveKey(pin) {
@@ -471,7 +536,7 @@
                     const iv = combined.slice(0, 12); const data = combined.slice(12);
                     const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
                     return new TextDecoder().decode(decrypted);
-                } catch (e) { return "⚠️ خطأ التشفير (كلمة مرور غير صحيحة)"; }
+                } catch (e) { return "⚠️ خطأ التشفير"; }
             }
         };
 
@@ -490,31 +555,26 @@
             if(document.getElementById('theme-toggle-btn')) document.getElementById('theme-toggle-btn').textContent = '☀️ الوضع الفاتح';
         }
 
-        // 3. نظام الخمول وقفل التطبيق وكلمة المرور الرئيسية
+        // 3. نظام الخمول وقفل التطبيق
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
             if (document.getElementById('pin-screen').style.display === 'none') {
-                inactivityTimer = setTimeout(lockVault, 180000); // قفل تلقائي بعد 3 دقائق خمول
+                inactivityTimer = setTimeout(lockVault, 180000); // 3 دقائق
             }
         }
         function lockVault() {
             document.getElementById('pin-screen').style.display = 'flex';
             currentPin = ""; cryptoKey = null;
-            document.getElementById('master-pass-input').value = "";
-            showToast("🔒 تم قفل الخزنة ومسح المفتاح من الذاكرة");
+            document.querySelectorAll('.pin-digit').forEach(i => i.value = "");
+            showToast("🔒 تم قفل الخزنة للحماية");
         }
         ['mousemove', 'keydown', 'touchstart', 'click'].forEach(evt => window.addEventListener(evt, resetInactivityTimer));
         document.addEventListener('visibilitychange', () => { if (document.hidden && document.getElementById('pin-screen').style.display === 'none') lockVault(); });
 
-        // إظهار وإخفاء كلمة المرور الرئيسية في شاشة القفل
-        function toggleMasterShow() {
-            const input = document.getElementById('master-pass-input');
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-
-        // إمكانية الدخول بالضغط على زر Enter باللوحة
-        document.getElementById('master-pass-input').addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') document.getElementById('pin-submit-btn').click();
+        const pinInputs = document.querySelectorAll('.pin-digit');
+        pinInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => { if (e.target.value && index < pinInputs.length - 1) pinInputs[index + 1].focus(); });
+            input.addEventListener('keydown', (e) => { if (e.key === 'Backspace' && !input.value && index > 0) pinInputs[index - 1].focus(); });
         });
 
         function showToast(msg) {
@@ -533,12 +593,12 @@
 
         // 4. تسجيل الدخول وفك التشفير
         document.getElementById('pin-submit-btn').addEventListener('click', async () => {
-            let pin = document.getElementById('master-pass-input').value.trim();
-            if(pin.length < 4) return showToast("كلمة المرور الرئيسية يجب أن تكون 4 أحرف أو أرقام على الأقل");
+            let pin = Array.from(pinInputs).map(i => i.value).join('');
+            if(pin.length < 4) return showToast("الرجاء إدخال 4 خانات على الأقل");
             currentPin = pin;
 
             try {
-                showToast("🔐 جاري اشتقاق المفتاح العسكري وفك التشفير...");
+                showToast("🔐 جاري الاتصال وفك التشفير...");
                 cryptoKey = await CryptoEngine.deriveKey(pin);
                 let rawAccounts = [];
                 try {
@@ -550,7 +610,7 @@
                     } else if (result.status === "success") {
                         rawAccounts = result.accounts || [];
                         localStorage.setItem('offline_encrypted_vault', JSON.stringify(rawAccounts));
-                    } else { return showToast(result.message || "كلمة المرور الرئيسية غير صحيحة"); }
+                    } else { return showToast(result.message || "رمز الـ PIN غير صحيح"); }
                 } catch (netErr) {
                     const cached = localStorage.getItem('offline_encrypted_vault');
                     if (cached) {
@@ -559,7 +619,6 @@
                     } else throw netErr;
                 }
 
-                // فك التشفير (مع دعم التوافق العكسي للحسابات السابقة)
                 currentAccounts = await Promise.all(rawAccounts.map(async acc => ({
                     name: acc.name || acc.title || 'بدون اسم',
                     email: await CryptoEngine.decrypt(acc.email || acc.user || acc.username, cryptoKey),
@@ -567,14 +626,19 @@
                 })));
 
                 document.getElementById('pin-screen').style.display = 'none';
-                showToast("🔓 تم فك تشفير الخزنة بنجاح");
+                showToast("🔓 تم فتح الخزنة بنجاح");
                 renderCards(currentAccounts);
                 resetInactivityTimer();
             } catch (e) { showToast("خطأ في الاتصال أو فك التشفير"); }
         });
 
-        // 5. عرض البطاقات مع أزرار النسخ
+        // 5. عرض البطاقات النظيفة مع أزرار النسخ للبريد وكلمة السر وتحديث العداد
         function renderCards(accountsToRender) {
+            const counterElem = document.getElementById('total-accounts');
+            if (counterElem) {
+                counterElem.textContent = `${currentAccounts.length} حساب`;
+            }
+
             const grid = document.getElementById('accounts-grid');
             if (!accountsToRender || accountsToRender.length === 0) {
                 grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">لا توجد حسابات مضافة أو مطابقة للبحث</div>`;
@@ -621,10 +685,38 @@
             }).join('');
         }
 
+        // --- نظام الفلترة الذكي ---
+        function setFilter(keyword, btnElem) {
+            activeFilterKeyword = keyword.toLowerCase();
+            document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+            if(btnElem) btnElem.classList.add('active');
+            filterAccounts();
+        }
+
         function filterAccounts() {
             const query = document.getElementById('search-input').value.toLowerCase();
+            
             const filtered = currentAccounts.filter(acc => {
-                return (acc.name||'').toLowerCase().includes(query) || (acc.email||'').toLowerCase().includes(query);
+                const name = (acc.name||'').toLowerCase();
+                const email = (acc.email||'').toLowerCase();
+                
+                // البحث النصي في شريط البحث
+                const matchesSearch = name.includes(query) || email.includes(query);
+                
+                // الفلترة عبر أزرار التصنيفات الذكية
+                let matchesFilter = true;
+                if (activeFilterKeyword !== 'all') {
+                    matchesFilter = name.includes(activeFilterKeyword) || email.includes(activeFilterKeyword);
+                    
+                    // تحسين التخمين للمنصات المشهورة
+                    if (activeFilterKeyword === 'تويتر') matchesFilter = name.includes('تويتر') || name.includes('twitter') || name.includes('x');
+                    if (activeFilterKeyword === 'انستغرام') matchesFilter = name.includes('انستغرام') || name.includes('instagram') || name.includes('insta');
+                    if (activeFilterKeyword === 'facebook') matchesFilter = name.includes('فيسبوك') || name.includes('facebook') || name.includes('fb');
+                    if (activeFilterKeyword === 'تيك توك') matchesFilter = name.includes('تيك توك') || name.includes('tiktok') || name.includes('tik tok');
+                    if (activeFilterKeyword === 'gmail') matchesFilter = name.includes('gmail') || name.includes('جيميل') || email.includes('gmail');
+                }
+
+                return matchesSearch && matchesFilter;
             });
             renderCards(filtered);
         }
@@ -649,7 +741,7 @@
             }).catch(() => showToast("فشل النسخ"));
         }
 
-        // 6. الإضافة والتعديل والحفظ
+        // 6. الإضافة والتعديل والحفظ مع التنبيه عند التكرار
         function generatePassword() {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
             let pass = "";
@@ -681,11 +773,23 @@
 
         async function saveAccount(e) {
             e.preventDefault();
-            const accData = {
-                name: document.getElementById('acc-name').value.trim(),
-                email: document.getElementById('acc-email').value.trim(),
-                pass: document.getElementById('acc-pass').value
-            };
+            
+            const newName = document.getElementById('acc-name').value.trim();
+            const newEmail = document.getElementById('acc-email').value.trim();
+            const newPass = document.getElementById('acc-pass').value;
+
+            if (editingIndex === null) {
+                const isDuplicate = currentAccounts.some(acc => 
+                    acc.name.toLowerCase() === newName.toLowerCase() && 
+                    acc.email.toLowerCase() === newEmail.toLowerCase()
+                );
+                if (isDuplicate) {
+                    const confirmAdd = confirm("⚠️ تنبيه: يوجد حساب مسجل مسبقاً بنفس اسم المنصة والبريد الإلكتروني!\n\nهل أنت متأكد أنك تريد إضافته كحساب مكرر؟");
+                    if (!confirmAdd) return; 
+                }
+            }
+
+            const accData = { name: newName, email: newEmail, pass: newPass };
 
             if (editingIndex !== null) {
                 currentAccounts[editingIndex] = accData;
@@ -698,14 +802,15 @@
             await syncEncryptedVault();
             closeModal();
             document.getElementById('search-input').value = "";
-            renderCards(currentAccounts);
+            // استعادة الفلتر إلى "الكل" بعد الحفظ لعرض جميع البطاقات
+            setFilter('all', document.querySelector('.pill'));
         }
 
         async function deleteAccount(index) {
             if(!confirm("هل أنت متأكد من حذف هذا الحساب نهائيًا؟")) return;
             currentAccounts.splice(index, 1);
             await syncEncryptedVault("🗑️ جاري الحذف وتحديث الخزنة...");
-            renderCards(currentAccounts);
+            filterAccounts(); // إعادة تطبيق الفلتر الحالي بعد الحذف
         }
 
         async function syncEncryptedVault(customMsg) {
@@ -749,10 +854,9 @@
             reader.onload = async function(e) {
                 try {
                     let content = e.target.result;
-                    content = content.replace(/^\uFEFF/, ''); // تنظيف رموز BOM في ملفات CSV العربية
+                    content = content.replace(/^\uFEFF/, '');
                     let newAccounts = [];
 
-                    // 1. استيراد ملفات CSV من البرنامج القديم
                     if (file.name.endsWith('.csv') || content.includes('المستخدم') || content.includes('كلمة السر')) {
                         showToast("جاري قراءة ملف الـ CSV وتشفير الحسابات...");
                         const lines = content.split(/\r\n|\n/).filter(line => line.trim() !== '');
@@ -780,7 +884,6 @@
                             }
                         }
                     } 
-                    // 2. استيراد ملفات JSON
                     else {
                         const imported = JSON.parse(content);
                         if(Array.isArray(imported)) {
@@ -793,7 +896,6 @@
                         }
                     }
 
-                    // دمج البيانات المستوردة مع البيانات الحالية وحفظها
                     if (newAccounts.length > 0) {
                         currentAccounts = [...currentAccounts, ...newAccounts];
                         await syncEncryptedVault("🚀 جاري مزامنة وتشفير كافة الحسابات...");
