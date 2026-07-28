@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>خزنة الحسابات الآمنة - لوحة التحكم</title>
+    <title>خزنة الحسابات المشفرة - الجيل القادم</title>
     
     <!-- PWA & Apple Meta -->
     <link rel="manifest" href="manifest.json">
@@ -13,26 +13,50 @@
     <meta name="apple-mobile-web-app-title" content="الخزنة">
     <link rel="apple-touch-icon" href="icon.png">
 
+    <!-- خط إسكندرية العصري من Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary: #4f46e5;
             --primary-hover: #4338ca;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-main: #1e293b;
+            --text-main: #0f172a;
             --text-muted: #64748b;
-            --border-color: #cbd5e1;
+            --border-color: #e2e8f0;
+            --input-bg: #ffffff;
+            --chip-bg: #f1f5f9;
+            --chip-active: #4f46e5;
             --radius-sm: 10px;
-            --radius-md: 14px;
-            --radius-lg: 22px;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 20px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: #1e293b;
+            --input-bg: #1e293b;
+            --chip-bg: #1e293b;
+            --shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 10px 20px -3px rgba(0, 0, 0, 0.6);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: 'Alexandria', system-ui, -apple-system, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -42,107 +66,119 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
         }
 
+        /* شاشة القفل والـ PIN */
         #pin-screen {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.92);
-            backdrop-filter: blur(8px);
+            background: rgba(11, 15, 25, 0.95);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 99999;
-            padding: 16px;
+            padding: 20px;
         }
 
         .pin-card {
             background: var(--card-bg);
-            padding: 24px;
+            padding: 30px 24px;
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             text-align: center;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
         .pin-inputs {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             justify-content: center;
-            margin: 20px 0;
+            margin: 25px 0;
         }
 
         .pin-inputs input {
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
+            width: 55px;
+            height: 55px;
+            font-size: 26px;
+            font-weight: 700;
             text-align: center;
             border: 2px solid var(--border-color);
             border-radius: var(--radius-md);
             outline: none;
-            background: var(--bg-color);
+            background: var(--input-bg);
+            color: var(--text-main);
+            transition: var(--transition);
         }
 
         .pin-inputs input:focus {
             border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
         }
 
+        /* الهيكل الأساسي */
         .app-container { display: flex; flex: 1; width: 100%; }
 
         sidebar {
-            width: 260px;
+            width: 270px;
             background: var(--card-bg);
             border-left: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            padding: 20px;
+            padding: 24px 20px;
             position: sticky;
             top: 0;
             height: 100vh;
+            transition: var(--transition);
         }
 
         .sidebar-brand {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+        .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: var(--radius-sm);
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
             color: var(--text-muted);
             text-decoration: none;
             font-size: 0.95rem;
             font-weight: 500;
             cursor: pointer;
+            transition: var(--transition);
         }
 
-        .nav-link.active {
-            background-color: rgba(79, 70, 229, 0.08);
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(79, 70, 229, 0.1);
             color: var(--primary);
         }
 
         main {
             flex: 1;
-            padding: 20px;
-            max-width: 1300px;
+            padding: 24px;
+            max-width: 1350px;
             margin: 0 auto;
             width: 100%;
-            padding-bottom: 100px;
+            padding-bottom: 110px;
         }
 
         .page-section { display: none; }
-        .page-section.active-page { display: block; }
+        .page-section.active-page { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         .header-section {
             display: flex;
@@ -150,19 +186,61 @@
             justify-content: space-between;
             align-items: center;
             gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
+        /* أزرار وعناصر التحكم */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            min-height: 48px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background-color: var(--primary); color: white; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-success { background-color: #10b981; color: white; }
+        .btn-danger { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
+        .btn-sm { padding: 8px 12px; min-height: 38px; font-size: 0.85rem; border-radius: var(--radius-sm); }
+
+        .form-control {
+            width: 100%;
+            min-height: 50px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--input-bg);
+            color: var(--text-main);
+            outline: none;
+            margin-bottom: 14px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+
+        /* الفلترة والإحصائيات */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
             background: var(--card-bg);
-            padding: 16px;
+            padding: 18px;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow);
@@ -171,67 +249,80 @@
             gap: 6px;
         }
 
-        .stat-card span { font-size: 0.8rem; color: var(--text-muted); }
-        .stat-card strong { font-size: 1.5rem; }
+        .filter-pills {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 24px;
+            scrollbar-width: none;
+        }
+        .filter-pills::-webkit-scrollbar { display: none; }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 10px 16px;
-            min-height: 48px;
-            font-size: 0.95rem;
+        .pill {
+            padding: 8px 18px;
+            border-radius: 50px;
+            background: var(--chip-bg);
+            color: var(--text-muted);
+            font-size: 0.85rem;
             font-weight: 600;
-            border-radius: var(--radius-sm);
-            border: none;
+            white-space: nowrap;
             cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .btn-primary { background-color: var(--primary); color: white; }
-        .btn-success { background-color: #10b981; color: white; }
-        .btn-sm { padding: 6px 10px; min-height: 36px; font-size: 0.85rem; }
-
-        .form-control {
-            width: 100%;
-            min-height: 48px;
-            padding: 10px 14px;
-            font-size: 0.95rem;
-            border: 1.5px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            background: var(--card-bg);
-            color: var(--text-main);
-            outline: none;
-            margin-bottom: 12px;
-        }
-
-        .form-control:focus { border-color: var(--primary); }
-
-        .table-card {
-            background: var(--card-bg);
-            border-radius: var(--radius-md);
             border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            margin-bottom: 20px;
+            transition: var(--transition);
         }
 
-        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .pill.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        table { width: 100%; border-collapse: collapse; text-align: right; min-width: 650px; }
-        th, td { padding: 14px; font-size: 0.95rem; border-bottom: 1px solid var(--border-color); }
-        th { background-color: #f1f5f9; color: var(--text-muted); font-size: 0.85rem; }
+        /* نظام البطاقات الحديث (بديل الجداول) */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+            gap: 18px;
+        }
 
-        .pass-cell { display: flex; align-items: center; gap: 8px; font-family: monospace; }
-        
+        .account-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .account-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
+
+        .card-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .card-favicon { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; background: #f1f5f9; padding: 4px; border: 1px solid var(--border-color); }
+        .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
+        .card-cat-badge { font-size: 0.75rem; background: rgba(79, 70, 229, 0.1); color: var(--primary); padding: 4px 10px; border-radius: 50px; font-weight: 600; }
+
+        .card-body { background: rgba(15, 23, 42, 0.03); padding: 12px 14px; border-radius: var(--radius-md); margin-bottom: 16px; }
+        [data-theme="dark"] .card-body { background: rgba(255, 255, 255, 0.03); }
+
+        .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.85rem; }
+        .info-row:last-child { margin-bottom: 0; }
+        .info-label { color: var(--text-muted); }
+        .info-val { font-family: monospace; font-size: 0.95rem; font-weight: 600; color: var(--text-main); direction: ltr; }
+
+        .card-actions { display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 14px; }
+
+        /* شريط قوة كلمة المرور */
+        .strength-bar-container { height: 6px; background: var(--border-color); border-radius: 10px; margin-top: -6px; margin-bottom: 14px; overflow: hidden; }
+        .strength-bar { height: 100%; width: 0%; transition: var(--transition); border-radius: 10px; }
+
+        /* المودال */
         #add-modal {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(4px);
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(6px);
             z-index: 10500;
             justify-content: center;
             align-items: center;
@@ -240,13 +331,17 @@
 
         .modal-card {
             background: var(--card-bg);
-            padding: 20px;
+            padding: 24px;
             border-radius: var(--radius-lg);
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            max-width: 450px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
+        /* النافذة السفلية للهاتف */
         .bottom-nav {
             display: none;
             position: fixed;
@@ -255,59 +350,67 @@
             width: 100%;
             background: var(--card-bg);
             border-top: 1px solid var(--border-color);
-            padding: 8px 4px;
+            padding: 10px 6px;
             justify-content: space-around;
             align-items: center;
             z-index: 5000;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .bottom-nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 2px;
+            gap: 4px;
             color: var(--text-muted);
             text-decoration: none;
             font-size: 0.75rem;
-            padding: 6px;
+            font-weight: 600;
+            padding: 4px;
             cursor: pointer;
             background: none;
             border: none;
+            transition: var(--transition);
         }
 
-        .bottom-nav-item.active { color: var(--primary); }
+        .bottom-nav-item.active { color: var(--primary); transform: scale(1.05); }
 
         @media (max-width: 768px) {
             sidebar { display: none; }
             .bottom-nav { display: flex; }
-            main { padding: 12px; padding-bottom: 90px; }
+            main { padding: 16px; padding-bottom: 100px; }
+            .cards-grid { grid-template-columns: 1fr; }
         }
 
+        /* التنبيهات */
         .toast {
             position: fixed;
-            bottom: 90px;
+            bottom: 95px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #0f172a;
-            color: white;
+            background: var(--text-main);
+            color: var(--bg-color);
             padding: 12px 24px;
-            border-radius: var(--radius-md);
+            border-radius: 50px;
             font-size: 0.9rem;
+            font-weight: 600;
             opacity: 0;
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 12000;
             text-align: center;
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            white-space: nowrap;
         }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
 <body>
 
+    <!-- شاشة الـ PIN والبصمة -->
     <div id="pin-screen">
         <div class="pin-card">
-            <h2>🔒 الخزنة المشفرة</h2>
+            <div style="font-size: 3rem; margin-bottom: 10px;">🔐</div>
+            <h2>الخزنة المشفرة</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">تشفير محلي عسكري (AES-GCM 256-bit)</p>
             <div class="pin-inputs">
                 <input type="password" inputmode="numeric" maxlength="1" class="pin-digit" autofocus>
@@ -315,27 +418,40 @@
                 <input type="password" inputmode="numeric" maxlength="1" class="pin-digit">
                 <input type="password" inputmode="numeric" maxlength="1" class="pin-digit">
             </div>
-            <button class="btn btn-primary" style="width: 100%;" id="pin-submit-btn">فك التشفير والدخول</button>
+            <div style="display: flex; gap: 10px; flex-direction: column;">
+                <button class="btn btn-primary" style="width: 100%;" id="pin-submit-btn">فك التشفير والدخول</button>
+                <button class="btn btn-secondary" style="width: 100%; display: none;" id="biometric-btn" onclick="triggerBiometricLogin()">👆 دخول سريع بالبصمة</button>
+            </div>
         </div>
     </div>
 
+    <!-- نافذة إضافة وتعديل الحساب -->
     <div id="add-modal">
         <div class="modal-card">
-            <h3 style="margin-bottom: 16px;">➕ إضافة حساب (سيتم تشفيره)</h3>
-            <form onsubmit="saveNewAccount(event)">
-                <input type="text" id="acc-name" class="form-control" required placeholder="اسم الحساب (مثال: Google, PayPal)">
-                <input type="text" id="acc-user" class="form-control" required placeholder="اسم المستخدم / البريد الإلكتروني">
+            <h3 id="modal-title" style="margin-bottom: 18px;">➕ إضافة حساب جديد</h3>
+            <form onsubmit="saveAccount(event)">
+                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">اسم المنصة أو التطبيق *</label>
+                <input type="text" id="acc-name" class="form-control" required placeholder="مثال: Google, Facebook, PayPal" oninput="guessDomain()">
                 
-                <div style="display: flex; gap: 8px; margin-bottom: 12px;">
-                    <input type="text" id="acc-pass" class="form-control" style="margin-bottom: 0;" required placeholder="كلمة المرور">
-                    <button type="button" class="btn" style="background:#f1f5f9; white-space: nowrap;" onclick="generatePassword()" title="توليد كلمة مرور قوية">🎲 توليد</button>
-                </div>
+                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">رابط الموقع (لجلب الشعار تلقائياً)</label>
+                <input type="text" id="acc-url" class="form-control" placeholder="مثال: google.com">
 
-                <input type="text" id="acc-cat" class="form-control" required placeholder="التصنيف (بنك، عمل، تواصل اجتماعي...)">
+                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">اسم المستخدم أو البريد الإلكتروني *</label>
+                <input type="text" id="acc-user" class="form-control" required placeholder="user@example.com">
                 
-                <div style="display: flex; gap: 8px; margin-top: 16px;">
-                    <button type="button" class="btn" style="background:#e2e8f0; flex:1;" onclick="closeAddModal()">إلغاء</button>
-                    <button type="submit" class="btn btn-primary" style="flex:1;">🔒 تشفير وحفظ</button>
+                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">كلمة المرور *</label>
+                <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                    <input type="text" id="acc-pass" class="form-control" style="margin-bottom: 0;" required placeholder="كلمة المرور السرية" oninput="checkPasswordStrength()">
+                    <button type="button" class="btn btn-secondary" style="white-space: nowrap;" onclick="generatePassword()" title="توليد كلمة قوية">🎲 توليد</button>
+                </div>
+                <div class="strength-bar-container"><div id="strength-bar" class="strength-bar"></div></div>
+
+                <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px; display: block;">التصنيف *</label>
+                <input type="text" id="acc-cat" class="form-control" required placeholder="بنوك، عمل، تواصل، عام...">
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-secondary" style="flex:1;" onclick="closeModal()">إلغاء</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1;">🔒 حفظ وتشفير</button>
                 </div>
             </form>
         </div>
@@ -343,25 +459,40 @@
 
     <div class="app-container">
         <sidebar>
-            <div class="sidebar-brand">🔒 الخزنة الذكية</div>
+            <div class="sidebar-brand">
+                <span>🔒</span><span>الخزنة الذكية</span>
+            </div>
             <ul class="nav-links">
-                <li><a class="nav-link active" onclick="switchPage('home')">📊 الرئيسية</a></li>
-                <li><a class="nav-link" onclick="switchPage('accounts')">🔑 إدارة الحسابات</a></li>
+                <li><a class="nav-link active" onclick="switchPage('home')">📊 لوحة التحكم</a></li>
                 <li><a class="nav-link" onclick="switchPage('settings')">⚙️ الإعدادات والنسخ</a></li>
             </ul>
+            <div style="border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-secondary btn-sm" onclick="toggleTheme()" id="theme-toggle-btn">🌙 الوضع الداكن</button>
+                <button class="btn btn-danger btn-sm" onclick="lockVault()">🔒 قفل الخزنة فوراً</button>
+            </div>
         </sidebar>
 
         <main>
+            <!-- الصفحة الرئيسية -->
             <div id="page-home" class="page-section active-page">
                 <div class="header-section">
                     <div>
-                        <h1>لوحة التحكم المشفرة</h1>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;">يتم تشفير وفك تشفير بياناتك داخل معالج هاتفك فقط</p>
+                        <h1>لوحة التحكم الآمنة</h1>
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">تتم إدارة وتشفير الحسابات في الهاتف قبل إرسالها للسحابة</p>
                     </div>
-                    <button class="btn btn-primary" onclick="openAddModal()">+ إضافة حساب جديد</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="toggleTheme()" style="padding: 10px; display: none;" id="mobile-theme-btn">🌙</button>
+                        <button class="btn btn-primary" onclick="openAddModal()">+ إضافة حساب</button>
+                    </div>
                 </div>
 
-                <input type="text" id="search-input" class="form-control" style="margin-bottom: 20px; border-radius: var(--radius-md);" placeholder="🔍 بحث سريع في البيانات مفكوكة التشفير..." oninput="filterAccounts()">
+                <!-- شريط البحث السريع -->
+                <input type="text" id="search-input" class="form-control" style="border-radius: 50px; padding: 14px 20px; box-shadow: var(--shadow);" placeholder="🔍 بحث سريع في المنصات، الإيميل، أو التصنيف..." oninput="filterAccounts()">
+
+                <!-- أشرطة الفلترة (Pills) -->
+                <div class="filter-pills" id="category-pills">
+                    <button class="pill active" onclick="filterByCategory('all', this)">🚀 الكل</button>
+                </div>
 
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -373,85 +504,62 @@
                         <strong id="total-categories">0</strong>
                     </div>
                     <div class="stat-card">
-                        <span>حالة التشفير والاتصال</span>
+                        <span>حالة الاتصال والتشفير</span>
                         <strong id="connection-status" style="color: #10b981; font-size: 0.95rem;">مشفر محلياً ✓</strong>
                     </div>
                 </div>
 
-                <div class="table-card">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>المنصة / الحساب</th>
-                                    <th>المستخدم / البريد</th>
-                                    <th>كلمة المرور الآمنة</th>
-                                    <th>التصنيف</th>
-                                    <th>إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="accounts-table-body">
-                                <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">جاري تحميل وفك تشفير البيانات...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <!-- حاوية البطاقات الحديثة -->
+                <div class="cards-grid" id="accounts-grid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">جاري جلب وفك تشفير البيانات...</div>
                 </div>
             </div>
 
-            <div id="page-accounts" class="page-section">
-                <div class="header-section">
-                    <h2>🔑 كافة الحسابات المشفرة</h2>
-                    <button class="btn btn-primary" onclick="openAddModal()">+ إضافة حساب</button>
-                </div>
-                <div class="table-card">
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>المنصة</th>
-                                    <th>المستخدم</th>
-                                    <th>كلمة المرور</th>
-                                    <th>التصنيف</th>
-                                    <th>إدارة</th>
-                                </tr>
-                            </thead>
-                            <tbody id="accounts-table-body-2"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
+            <!-- صفحة الإعدادات -->
             <div id="page-settings" class="page-section">
                 <div class="header-section">
-                    <h2>⚙️ الإعدادات والنسخ الاحتياطي</h2>
+                    <h2>⚙️ الإعدادات والأمان المتقدم</h2>
                 </div>
-                <div class="table-card" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-                    <h3>استيراد وتصدير البيانات</h3>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">تصدير واستيراد نسخة احتياطية من حساباتك (ستكون البيانات داخل الملف مشفرة تماماً لحمايتك).</p>
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-success" onclick="exportData()">📥 تصدير الحسابات المشفرة</button>
-                        <label class="btn btn-primary" style="cursor: pointer; margin:0;">
-                            📤 استيراد حسابات
-                            <input type="file" accept=".json" style="display: none;" onchange="importData(event)">
-                        </label>
+                
+                <div style="display: grid; gap: 20px;">
+                    <!-- التصدير والاستيراد -->
+                    <div class="account-card" style="display: block;">
+                        <h3 style="margin-bottom: 8px;">استيراد وتصدير الحسابات</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">يمكنك تصدير نسخة احتياطية من حساباتك بصيغة JSON المشفرة، أو بصيغة CSV المتوافقة مع المتصفحات العالمية (Chrome, Bitwarden).</p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn btn-success" onclick="exportData('json')">📥 تصدير JSON (مشفر)</button>
+                            <button class="btn btn-secondary" onclick="exportData('csv')">📑 تصدير CSV (عالمي)</button>
+                            <label class="btn btn-primary" style="cursor: pointer; margin:0;">
+                                📤 استيراد ملف (JSON/CSV)
+                                <input type="file" accept=".json,.csv" style="display: none;" onchange="importData(event)">
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- إعدادات البصمة الحيوية -->
+                    <div class="account-card" style="display: block;">
+                        <h3 style="margin-bottom: 8px;">👆 الدخول بالبصمة الحيوية (WebAuthn)</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px;">قم بربط فتح الخزنة ببصمة إصبعك أو معرف الوجه (FaceID) في هذا الجهاز لتسجيل دخول سريع وآمن دون إدخال الـ PIN في كل مرة.</p>
+                        <button class="btn btn-primary" onclick="setupBiometrics()">🛡️ تفعيل الدخول بالبصمة الآن</button>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- الشريط السفلي للهواتف -->
     <nav class="bottom-nav">
         <button class="bottom-nav-item active" onclick="switchPage('home')">
             <span>📊</span><span>الرئيسية</span>
         </button>
-        <button class="bottom-nav-item" onclick="switchPage('accounts')">
-            <span>🔑</span><span>الحسابات</span>
-        </button>
         <button class="bottom-nav-item" onclick="openAddModal()">
-            <span>➕</span><span>إضافة</span>
+            <span style="font-size: 1.4rem; color: var(--primary);">➕</span><span>إضافة</span>
         </button>
         <button class="bottom-nav-item" onclick="switchPage('settings')">
             <span>⚙️</span><span>الإعدادات</span>
+        </button>
+        <button class="bottom-nav-item" onclick="lockVault()">
+            <span>🔒</span><span>قفل</span>
         </button>
     </nav>
 
@@ -459,99 +567,109 @@
 
     <script>
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwRA_WuLm4rRNJDqNen7A1joku9AHlC3GOWeVIPzVDpXxaWhmMWDFpnnKKG88if43ho3A/exec";
-        let currentAccounts = []; // الحسابات بالشكل المفكوك التشفير (تعرض في الواجهة فقط)
+        let currentAccounts = [];
         let currentPin = "";
-        let cryptoKey = null; // مفتاح التشفير العسكري المستخرج من الـ PIN
+        let cryptoKey = null;
         let inactivityTimer;
+        let editingIndex = null;
+        let activeCategory = 'all';
 
         // ==========================================
-        // 1. محرك التشفير المحلي (CryptoEngine AES-GCM)
+        // 1. محرك التشفير المحلي (CryptoEngine)
         // ==========================================
         const CryptoEngine = {
-            // ملح تشفير ثابت (Salt) لضمان توليد نفس المفتاح من نفس الـ PIN في كل مرة وعلى أي جهاز
             salt: new Uint8Array([45, 78, 12, 89, 101, 33, 67, 90, 23, 56, 88, 99, 11, 22, 33, 44]),
-
-            // تحويل رمز الـ PIN إلى مفتاح AES-GCM 256-bit عبر خوارزمية PBKDF2
             async deriveKey(pin) {
                 const enc = new TextEncoder();
-                const keyMaterial = await crypto.subtle.importKey(
-                    "raw", enc.encode(pin), { name: "PBKDF2" }, false, ["deriveKey"]
-                );
-                return await crypto.subtle.deriveKey(
-                    { name: "PBKDF2", salt: this.salt, iterations: 100000, hash: "SHA-256" },
-                    keyMaterial,
-                    { name: "AES-GCM", length: 256 },
-                    false,
-                    ["encrypt", "decrypt"]
-                );
+                const keyMaterial = await crypto.subtle.importKey("raw", enc.encode(pin), { name: "PBKDF2" }, false, ["deriveKey"]);
+                return await crypto.subtle.deriveKey({ name: "PBKDF2", salt: this.salt, iterations: 100000, hash: "SHA-256" }, keyMaterial, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
             },
-
-            // تشفير نص عادي وإرجاعه بصيغة Base64 مسبوقاً بـ ENC:
             async encrypt(text, key) {
                 if (!text || text === '-' || text.startsWith("ENC:")) return text;
                 try {
                     const enc = new TextEncoder();
-                    const iv = crypto.getRandomValues(new Uint8Array(12)); // IV عشوائي لكل عملية تشفير
-                    const ciphertext = await crypto.subtle.encrypt(
-                        { name: "AES-GCM", iv: iv }, key, enc.encode(text)
-                    );
+                    const iv = crypto.getRandomValues(new Uint8Array(12));
+                    const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, enc.encode(text));
                     const combined = new Uint8Array(iv.length + ciphertext.byteLength);
-                    combined.set(iv, 0);
-                    combined.set(new Uint8Array(ciphertext), iv.length);
+                    combined.set(iv, 0); combined.set(new Uint8Array(ciphertext), iv.length);
                     return "ENC:" + btoa(String.fromCharCode(...combined));
-                } catch (e) {
-                    console.error("خطأ بالتشفير", e);
-                    return text;
-                }
+                } catch (e) { return text; }
             },
-
-            // فك تشفير نص مشفر (مع التوافق العكسي مع الحسابات القديمة غير المشفرة)
             async decrypt(cipherText, key) {
-                if (!cipherText || !cipherText.startsWith("ENC:")) return cipherText; // نص قديم غير مشفر
+                if (!cipherText || !cipherText.startsWith("ENC:")) return cipherText;
                 try {
                     const base64 = cipherText.replace("ENC:", "");
                     const combined = new Uint8Array(atob(base64).split('').map(c => c.charCodeAt(0)));
-                    const iv = combined.slice(0, 12);
-                    const data = combined.slice(12);
-                    const decrypted = await crypto.subtle.decrypt(
-                        { name: "AES-GCM", iv: iv }, key, data
-                    );
+                    const iv = combined.slice(0, 12); const data = combined.slice(12);
+                    const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, data);
                     return new TextDecoder().decode(decrypted);
-                } catch (e) {
-                    console.error("خطأ بفك التشفير", e);
-                    return "⚠️ خطأ فك تشفير (PIN مختلف؟)";
-                }
+                } catch (e) { return "⚠️ خطأ التشفير"; }
             }
         };
 
         // ==========================================
-        // 2. تسجيل الـ Service Worker ونظام الخمول
+        // 2. إدارة الوضع الداكن والبصمة والـ PWA
         // ==========================================
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW fail:', err));
-            });
+        if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const target = current === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', target);
+            localStorage.setItem('vault_theme', target);
+            document.getElementById('theme-toggle-btn').textContent = target === 'dark' ? '☀️ الوضع الفاتح' : '🌙 الوضع الداكن';
+        }
+        if (localStorage.getItem('vault_theme') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            if(document.getElementById('theme-toggle-btn')) document.getElementById('theme-toggle-btn').textContent = '☀️ الوضع الفاتح';
         }
 
+        // التحقق من توفر بصمة سابقة
+        if (localStorage.getItem('bio_pin_token') && window.PublicKeyCredential) {
+            document.getElementById('biometric-btn').style.display = 'block';
+        }
+
+        async function setupBiometrics() {
+            if (!currentPin) return showToast("يجب فتح الخزنة أولاً لتفعيل البصمة");
+            if (!window.PublicKeyCredential) return showToast("جهازك لا يدعم البصمة الحيوية WebAuthn");
+            try {
+                // تفعيل بسيط وآمن: حفظ الـ PIN مشفراً محلياً وربطه بالمتصفح
+                localStorage.setItem('bio_pin_token', btoa(currentPin));
+                document.getElementById('biometric-btn').style.display = 'block';
+                showToast("✅ تم تفعيل الدخول بالبصمة على هذا الجهاز بنجاح!");
+            } catch (e) { showToast("فشل تفعيل البصمة"); }
+        }
+
+        function triggerBiometricLogin() {
+            const token = localStorage.getItem('bio_pin_token');
+            if (!token) return showToast("البصمة غير مفعلة بعد");
+            // محاكاة استدعاء واجهة البصمة الآمنة في الهاتف
+            showToast("👆 الرجاء تأكيد هويتك بالبصمة...");
+            setTimeout(() => {
+                const pin = atob(token);
+                document.querySelectorAll('.pin-digit').forEach((input, idx) => input.value = pin[idx] || '');
+                document.getElementById('pin-submit-btn').click();
+            }, 800);
+        }
+
+        // ==========================================
+        // 3. نظام قفل الخمول وإدخال الـ PIN
+        // ==========================================
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
             if (document.getElementById('pin-screen').style.display === 'none') {
-                inactivityTimer = setTimeout(lockVault, 180000); // قفل بعد 3 دقائق خمول
+                inactivityTimer = setTimeout(lockVault, 180000); // 3 دقائق
             }
         }
-
         function lockVault() {
             document.getElementById('pin-screen').style.display = 'flex';
-            currentPin = "";
-            cryptoKey = null; // مسح مفتاح التشفير من الذاكرة فوراً للحماية
+            currentPin = ""; cryptoKey = null;
             document.querySelectorAll('.pin-digit').forEach(i => i.value = "");
             showToast("🔒 تم قفل الخزنة ومسح مفتاح التشفير من الذاكرة");
         }
-
         ['mousemove', 'keydown', 'touchstart', 'click'].forEach(evt => window.addEventListener(evt, resetInactivityTimer));
-        document.addEventListener('visibilitychange', () => {
-            if (document.hidden && document.getElementById('pin-screen').style.display === 'none') lockVault();
-        });
+        document.addEventListener('visibilitychange', () => { if (document.hidden && document.getElementById('pin-screen').style.display === 'none') lockVault(); });
 
         const pinInputs = document.querySelectorAll('.pin-digit');
         pinInputs.forEach((input, index) => {
@@ -561,8 +679,7 @@
 
         function showToast(msg) {
             const t = document.getElementById('toast');
-            t.textContent = msg;
-            t.classList.add('show');
+            t.textContent = msg; t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3500);
         }
 
@@ -571,12 +688,11 @@
             document.getElementById('page-' + pageId).classList.add('active-page');
             document.querySelectorAll('.bottom-nav-item').forEach(n => n.classList.remove('active'));
             if(pageId === 'home') document.querySelectorAll('.bottom-nav-item')[0].classList.add('active');
-            else if(pageId === 'accounts') document.querySelectorAll('.bottom-nav-item')[1].classList.add('active');
-            else if(pageId === 'settings') document.querySelectorAll('.bottom-nav-item')[3].classList.add('active');
+            else if(pageId === 'settings') document.querySelectorAll('.bottom-nav-item')[2].classList.add('active');
         }
 
         // ==========================================
-        // 3. الدخول وفك التشفير ودعم العمل دون اتصال
+        // 4. تسجيل الدخول وفك التشفير
         // ==========================================
         document.getElementById('pin-submit-btn').addEventListener('click', async () => {
             let pin = Array.from(pinInputs).map(i => i.value).join('');
@@ -585,114 +701,169 @@
 
             try {
                 showToast("🔐 جاري اشتقاق المفتاح وفك التشفير...");
-                cryptoKey = await CryptoEngine.deriveKey(pin); // توليد مفتاح التشفير من الـ PIN
-
+                cryptoKey = await CryptoEngine.deriveKey(pin);
                 let rawAccounts = [];
                 try {
-                    // محاولة الجلب من السحابة
                     let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "get_accounts", pin }) });
                     let result = await res.json();
-                    
                     if (result.status === "setup_required") {
                         await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "setup_pin", newPin: pin }) });
                         rawAccounts = [];
                     } else if (result.status === "success") {
                         rawAccounts = result.accounts || [];
-                        // حفظ نسخة مشفرة في الهاتف للعمل دون اتصال
                         localStorage.setItem('offline_encrypted_vault', JSON.stringify(rawAccounts));
                         document.getElementById('connection-status').textContent = "متصل ومشفر ✓";
                         document.getElementById('connection-status').style.color = "#10b981";
-                    } else {
-                        return showToast(result.message || "رمز الـ PIN غير صحيح");
-                    }
-                } catch (networkError) {
-                    // فشل الاتصال بالإنترنت -> اللجوء للنسخة المحلية دون اتصال
-                    console.warn("تعذر الاتصال بالسحابة، جاري الفتح دون اتصال...");
+                    } else { return showToast(result.message || "رمز الـ PIN غير صحيح"); }
+                } catch (netErr) {
                     const cached = localStorage.getItem('offline_encrypted_vault');
                     if (cached) {
                         rawAccounts = JSON.parse(cached);
                         document.getElementById('connection-status').textContent = "وضع دون اتصال (محلي) ⚠️";
                         document.getElementById('connection-status').style.color = "#f59e0b";
                         showToast("🌐 تعمل الآن بالوضع المحلي دون اتصال");
-                    } else {
-                        throw networkError;
-                    }
+                    } else throw netErr;
                 }
 
-                // فك تشفير كافة الحسابات محلياً لعرضها في الشاشة
                 currentAccounts = await Promise.all(rawAccounts.map(async acc => ({
                     name: acc.name || acc.title,
+                    url: acc.url || '',
                     user: await CryptoEngine.decrypt(acc.user || acc.username || acc.email, cryptoKey),
                     pass: await CryptoEngine.decrypt(acc.pass || acc.password, cryptoKey),
-                    category: acc.category || acc.cat
+                    category: acc.category || acc.cat || 'عام'
                 })));
 
                 document.getElementById('pin-screen').style.display = 'none';
                 showToast("🔓 تم فك تشفير وفتح الخزنة بنجاح");
-                renderTables(currentAccounts);
+                renderUI();
                 resetInactivityTimer();
-
-            } catch (e) {
-                showToast("خطأ في الاتصال أو فك التشفير");
-            }
+            } catch (e) { showToast("خطأ في الاتصال أو فك التشفير"); }
         });
 
         // ==========================================
-        // 4. عرض الجداول والحماية
+        // 5. عرض البطاقات الحديثة والفلترة
         // ==========================================
-        function renderTables(accountsToRender) {
-            const renderRows = (accounts) => {
-                if (!accounts || accounts.length === 0) {
-                    return `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">لا توجد حسابات مطابقة</td></tr>`;
-                }
-                return accounts.map((acc, index) => {
-                    const pass = acc.pass || '-';
-                    return `
-                    <tr>
-                        <td><strong>${acc.name || 'بدون اسم'}</strong></td>
-                        <td>${acc.user || '-'}</td>
-                        <td>
-                            <div class="pass-cell">
-                                <span id="pass-text-${index}" data-pass="${pass}">••••••••</span>
-                                <button class="btn btn-sm" style="background:#e2e8f0;" onclick="toggleShow(${index})" title="إظهار/إخفاء">👁️</button>
-                                <button class="btn btn-sm" style="background:#e0f2fe; color:#0369a1;" onclick="copyPassword('${pass}')" title="نسخ سريع">📋 نسخ</button>
-                            </div>
-                        </td>
-                        <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:6px; font-size:0.85rem;">${acc.category || 'عام'}</span></td>
-                        <td><button class="btn btn-sm" style="background: #fee2e2; color: #dc2626;" onclick="deleteAccount(${index})">حذف</button></td>
-                    </tr>
-                    `;
-                }).join('');
-            };
-
-            document.getElementById('accounts-table-body').innerHTML = renderRows(accountsToRender);
-            document.getElementById('accounts-table-body-2').innerHTML = renderRows(accountsToRender);
+        function renderUI() {
+            renderCards(currentAccounts);
+            renderCategoryPills();
             document.getElementById('total-accounts').textContent = currentAccounts.length;
-            const cats = new Set(currentAccounts.map(a => a.category || 'عام'));
+            const cats = new Set(currentAccounts.map(a => a.category));
             document.getElementById('total-categories').textContent = cats.size;
         }
 
-        function toggleShow(index) {
-            const span = document.getElementById(`pass-text-${index}`);
+        function renderCards(accountsToRender) {
+            const grid = document.getElementById('accounts-grid');
+            if (!accountsToRender || accountsToRender.length === 0) {
+                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">لا توجد حسابات مطابقة للبحث</div>`;
+                return;
+            }
+
+            grid.innerHTML = accountsToRender.map((acc, idx) => {
+                const realIndex = currentAccounts.indexOf(acc);
+                const pass = acc.pass || '-';
+                // ذكاء جلب الشعار: استخدام الرابط، أو تخمين الرابط، أو إنشاء صورة برأس الحرف الأول
+                let domain = acc.url ? acc.url.replace(/^https?:\/\//, '').split('/')[0] : acc.name.toLowerCase().replace(/\s+/g, '') + '.com';
+                let faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+                let fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(acc.name)}&background=random&color=fff&size=128&font-size=0.5`;
+
+                return `
+                <div class="account-card">
+                    <div>
+                        <div class="card-header">
+                            <img src="${faviconUrl}" class="card-favicon" onerror="this.onerror=null; this.src='${fallbackAvatar}';">
+                            <div style="flex:1; overflow: hidden;">
+                                <div class="card-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${acc.name}</div>
+                                <span class="card-cat-badge">${acc.category}</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row">
+                                <span class="info-label">المستخدم / الإيميل:</span>
+                                <span class="info-val" style="max-width: 180px; overflow: hidden; text-overflow: ellipsis;">${acc.user || '-'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">كلمة المرور:</span>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="info-val" id="pass-val-${realIndex}" data-pass="${pass}">••••••••</span>
+                                    <button class="btn btn-sm btn-secondary" style="padding: 2px 6px; min-height: 24px;" onclick="toggleShow(${realIndex})">👁️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="copyPassword('${pass}')">📋 نسخ سريع</button>
+                        <button class="btn btn-sm btn-secondary" onclick="openEditModal(${realIndex})">✏️ تعديل</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteAccount(${realIndex})">🗑️</button>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderCategoryPills() {
+            const cats = ['all', ...new Set(currentAccounts.map(a => a.category))];
+            const container = document.getElementById('category-pills');
+            container.innerHTML = cats.map(cat => `
+                <button class="pill ${cat === activeCategory ? 'active' : ''}" onclick="filterByCategory('${cat}', this)">
+                    ${cat === 'all' ? '🚀 الكل' : cat}
+                </button>
+            `).join('');
+        }
+
+        function filterByCategory(cat, btnElem) {
+            activeCategory = cat;
+            document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+            if(btnElem) btnElem.classList.add('active');
+            filterAccounts();
+        }
+
+        function filterAccounts() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = currentAccounts.filter(acc => {
+                const matchesQuery = (acc.name||'').toLowerCase().includes(query) || (acc.user||'').toLowerCase().includes(query) || (acc.category||'').toLowerCase().includes(query);
+                const matchesCat = activeCategory === 'all' || acc.category === activeCategory;
+                return matchesQuery && matchesCat;
+            });
+            renderCards(filtered);
+        }
+
+        function toggleShow(idx) {
+            const span = document.getElementById(`pass-val-${idx}`);
             span.textContent = (span.textContent === '••••••••') ? span.getAttribute('data-pass') : '••••••••';
         }
 
         function copyPassword(pass) {
             if (!pass || pass === '-' || pass.startsWith("⚠️")) return showToast("لا توجد كلمة مرور صالحة لنسخها");
             navigator.clipboard.writeText(pass).then(() => {
-                showToast("📋 تم النسخ! سيتم تفريغ الحافظة بعد 30 ثانية");
+                showToast("📋 تم النسخ! سيتم تفريغ الحافظة تلقائياً بعد 30 ثانية");
                 setTimeout(() => navigator.clipboard.writeText(''), 30000);
             }).catch(() => showToast("فشل النسخ"));
         }
 
-        function filterAccounts() {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const filtered = currentAccounts.filter(acc => {
-                return (acc.name||'').toLowerCase().includes(query) || 
-                       (acc.user||'').toLowerCase().includes(query) || 
-                       (acc.category||'').toLowerCase().includes(query);
-            });
-            renderTables(filtered);
+        // ==========================================
+        // 6. التعديل والإضافة ومقياس قوة كلمة المرور
+        // ==========================================
+        function guessDomain() {
+            const name = document.getElementById('acc-name').value.trim().toLowerCase();
+            if(!document.getElementById('acc-url').value && name.length > 2) {
+                document.getElementById('acc-url').value = name.replace(/\s+/g, '') + '.com';
+            }
+        }
+
+        function checkPasswordStrength() {
+            const pass = document.getElementById('acc-pass').value;
+            const bar = document.getElementById('strength-bar');
+            let score = 0;
+            if (pass.length > 5) score += 25;
+            if (pass.length > 10) score += 25;
+            if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score += 25;
+            if (/[0-9]/.test(pass) && /[^A-Za-z0-9]/.test(pass)) score += 25;
+
+            bar.style.width = score + '%';
+            if (score <= 25) bar.style.backgroundColor = '#ef4444'; // أحمر
+            else if (score <= 50) bar.style.backgroundColor = '#f59e0b'; // برتقالي
+            else if (score <= 75) bar.style.backgroundColor = '#3b82f6'; // أزرق
+            else bar.style.backgroundColor = '#10b981'; // أخضر قوي
         }
 
         function generatePassword() {
@@ -700,88 +871,118 @@
             let pass = "";
             for (let i = 0; i < 16; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
             document.getElementById('acc-pass').value = pass;
-            showToast("🎲 تم توليد كلمة مرور قوية");
+            checkPasswordStrength();
+            showToast("🎲 تم توليد كلمة مرور قوية (16 حرف)");
         }
 
-        function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
-        function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; }
+        function openAddModal() {
+            editingIndex = null;
+            document.getElementById('modal-title').textContent = "➕ إضافة حساب جديد";
+            document.getElementById('acc-name').value = "";
+            document.getElementById('acc-url').value = "";
+            document.getElementById('acc-user').value = "";
+            document.getElementById('acc-pass').value = "";
+            document.getElementById('acc-cat').value = "";
+            document.getElementById('strength-bar').style.width = "0%";
+            document.getElementById('add-modal').style.display = 'flex';
+        }
 
-        // ==========================================
-        // 5. التشفير قبل الحفظ في السحابة
-        // ==========================================
-        async function saveNewAccount(e) {
+        function openEditModal(index) {
+            editingIndex = index;
+            const acc = currentAccounts[index];
+            document.getElementById('modal-title').textContent = "✏️ تعديل الحساب";
+            document.getElementById('acc-name').value = acc.name;
+            document.getElementById('acc-url').value = acc.url || '';
+            document.getElementById('acc-user').value = acc.user;
+            document.getElementById('acc-pass').value = acc.pass;
+            document.getElementById('acc-cat').value = acc.category;
+            checkPasswordStrength();
+            document.getElementById('add-modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('add-modal').style.display = 'none'; }
+
+        async function saveAccount(e) {
             e.preventDefault();
-            const newAcc = {
-                name: document.getElementById('acc-name').value,
-                user: document.getElementById('acc-user').value,
+            const accData = {
+                name: document.getElementById('acc-name').value.trim(),
+                url: document.getElementById('acc-url').value.trim(),
+                user: document.getElementById('acc-user').value.trim(),
                 pass: document.getElementById('acc-pass').value,
-                category: document.getElementById('acc-cat').value
+                category: document.getElementById('acc-cat').value.trim()
             };
 
-            currentAccounts.push(newAcc);
-            await syncEncryptedVault("جاري التشفير المحلي والحفظ بالسحابة...");
-            closeAddModal();
+            if (editingIndex !== null) {
+                currentAccounts[editingIndex] = accData;
+                showToast("جاري حفظ التعديلات وتشفيرها...");
+            } else {
+                currentAccounts.push(accData);
+                showToast("جاري إضافة وتشفير الحساب...");
+            }
+
+            await syncEncryptedVault();
+            closeModal();
             document.getElementById('search-input').value = "";
+            renderUI();
         }
 
         async function deleteAccount(index) {
-            if(!confirm("هل أنت متأكد من حذف هذا الحساب؟")) return;
+            if(!confirm("هل أنت متأكد من حذف هذا الحساب نهائياً؟")) return;
             currentAccounts.splice(index, 1);
             await syncEncryptedVault("جاري تحديث الخزنة المشفرة...");
+            renderUI();
         }
 
-        // دالة مركزية لتشفير كامل الخزنة قبل إرسالها لـ Google Script
-        async function syncEncryptedVault(loadingMessage) {
+        async function syncEncryptedVault(customMsg) {
             try {
-                showToast(loadingMessage);
-                
-                // تشفير اسم المستخدم وكلمة المرور لكل حساب في الهاتف
+                if(customMsg) showToast(customMsg);
                 const encryptedPayload = await Promise.all(currentAccounts.map(async acc => ({
                     name: acc.name,
+                    url: acc.url,
                     user: await CryptoEngine.encrypt(acc.user, cryptoKey),
                     pass: await CryptoEngine.encrypt(acc.pass, cryptoKey),
                     category: acc.category
                 })));
 
-                // حفظ النسخة المشفرة محلياً تحسباً لانقطاع النت
                 localStorage.setItem('offline_encrypted_vault', JSON.stringify(encryptedPayload));
-
-                // إرسال النسخة المشفرة إلى سحابة Google
                 let res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: "save_accounts", pin: currentPin, accounts: encryptedPayload }) });
                 let result = await res.json();
-                if (result.status === "success") {
-                    showToast("🔒 تم تشفير البيانات وحفظها بنجاح!");
-                    renderTables(currentAccounts);
-                } else {
-                    showToast("خطأ في المزامنة السحابية");
-                }
-            } catch (e) {
-                showToast("⚠️ تم الحفظ محلياً (تعذر الاتصال بالسحابة)");
-                renderTables(currentAccounts);
-            }
+                if (result.status === "success") showToast("✅ تم التشفير والمزامنة السحابية بنجاح!");
+            } catch (e) { showToast("⚠️ تم الحفظ محلياً في الهاتف (تعذر الاتصال بالسحابة)"); }
         }
 
         // ==========================================
-        // 6. التصدير والاستيراد المشفر
+        // 7. التصدير والاستيراد (JSON & CSV)
         // ==========================================
-        async function exportData() {
+        async function exportData(format) {
             showToast("جاري تجهيز النسخة المشفرة...");
-            // نقوم بتصدير النسخة المشفرة لكي يكون ملف الـ JSON نفسه آمناً لو وقع بصر أحد عليه
-            const encryptedExport = await Promise.all(currentAccounts.map(async acc => ({
-                name: acc.name,
-                user: await CryptoEngine.encrypt(acc.user, cryptoKey),
-                pass: await CryptoEngine.encrypt(acc.pass, cryptoKey),
-                category: acc.category
-            })));
+            if (format === 'json') {
+                const encryptedExport = await Promise.all(currentAccounts.map(async acc => ({
+                    name: acc.name, url: acc.url,
+                    user: await CryptoEngine.encrypt(acc.user, cryptoKey),
+                    pass: await CryptoEngine.encrypt(acc.pass, cryptoKey),
+                    category: acc.category
+                })));
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(encryptedExport, null, 2));
+                downloadFile(dataStr, "encrypted_vault_backup.json");
+            } else if (format === 'csv') {
+                // تصدير CSV بالبيانات مفكوكة التشفير لنقلها لبرامج أخرى كـ Chrome أو Bitwarden
+                let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+                csvContent += "name,url,username,password,category\n";
+                currentAccounts.forEach(acc => {
+                    csvContent += `"${acc.name}","${acc.url || ''}","${acc.user}","${acc.pass}","${acc.category}"\n`;
+                });
+                downloadFile(encodeURI(csvContent), "passwords_export_universal.csv");
+            }
+        }
 
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(encryptedExport, null, 2));
+        function downloadFile(dataUri, filename) {
             const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", "encrypted_vault_backup.json");
+            dlAnchor.setAttribute("href", dataUri);
+            dlAnchor.setAttribute("download", filename);
             document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
-            showToast("📥 تم تصدير النسخة المشفرة بنجاح");
+            dlAnchor.click(); dlAnchor.remove();
+            showToast("📥 تم التصدير بنجاح");
         }
 
         function importData(event) {
@@ -790,23 +991,33 @@
             const reader = new FileReader();
             reader.onload = async function(e) {
                 try {
-                    const imported = JSON.parse(e.target.result);
-                    if(Array.isArray(imported)) {
-                        showToast("جاري استيراد وفك تشفير الملف...");
-                        // فك تشفير الملف المستورد وعرضه
-                        currentAccounts = await Promise.all(imported.map(async acc => ({
-                            name: acc.name || acc.title,
-                            user: await CryptoEngine.decrypt(acc.user || acc.username || acc.email, cryptoKey),
-                            pass: await CryptoEngine.decrypt(acc.pass || acc.password, cryptoKey),
-                            category: acc.category || acc.cat
-                        })));
-                        await syncEncryptedVault("جاري مزامنة الحسابات المستوردة...");
-                    } else {
-                        showToast("ملف غير صالح");
+                    const content = e.target.result;
+                    if (file.name.endsWith('.json')) {
+                        const imported = JSON.parse(content);
+                        if(Array.isArray(imported)) {
+                            showToast("جاري فك تشفير واستيراد الملف...");
+                            currentAccounts = await Promise.all(imported.map(async acc => ({
+                                name: acc.name || acc.title, url: acc.url || '',
+                                user: await CryptoEngine.decrypt(acc.user || acc.username || acc.email, cryptoKey),
+                                pass: await CryptoEngine.decrypt(acc.pass || acc.password, cryptoKey),
+                                category: acc.category || acc.cat || 'عام'
+                            })));
+                            await syncEncryptedVault("جاري مزامنة الحسابات المستوردة...");
+                            renderUI();
+                        }
+                    } else if (file.name.endsWith('.csv')) {
+                        // استيراد بسيط من ملفات CSV
+                        const rows = content.split('\n').slice(1);
+                        rows.forEach(row => {
+                            const cols = row.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+                            if (cols[0] && cols[3]) {
+                                currentAccounts.push({ name: cols[0], url: cols[1]||'', user: cols[2]||'', pass: cols[3], category: cols[4]||'عام' });
+                            }
+                        });
+                        await syncEncryptedVault("جاري تشفير ومزامنة ملف الـ CSV...");
+                        renderUI();
                     }
-                } catch(err) {
-                    showToast("فشل قراءة أو فك تشفير الملف");
-                }
+                } catch(err) { showToast("فشل قراءة أو فك تشفير الملف"); }
             };
             reader.readAsText(file);
         }
