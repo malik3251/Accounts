@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-title" content="الخزنة">
     <link rel="apple-touch-icon" href="icon.png">
 
-    <!-- خط إسكندرية العصري من Google Fonts -->
+    <!-- خط إسكندرية العصري -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -88,13 +88,14 @@
             text-align: center;
             border: 1px solid var(--border-color);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
 
         .pin-inputs {
             display: flex;
             gap: 10px;
             justify-content: center;
-            margin: 25px 0;
+            margin: 25px 0 15px 0;
         }
 
         .pin-inputs input {
@@ -111,9 +112,18 @@
             transition: var(--transition);
         }
 
-        .pin-inputs input:focus {
-            border-color: var(--primary);
-            transform: translateY(-2px);
+        .pin-inputs input:focus { border-color: var(--primary); transform: translateY(-2px); }
+        .pin-inputs input:disabled { opacity: 0.5; background: var(--border-color); cursor: not-allowed; transform: none; }
+
+        #lockout-timer {
+            color: #ef4444;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            display: none;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 8px;
+            border-radius: var(--radius-sm);
         }
 
         /* الهيكل الأساسي */
@@ -131,79 +141,25 @@
             height: 100vh;
         }
 
-        .sidebar-brand {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .sidebar-brand { font-size: 1.2rem; font-weight: 700; color: var(--primary); margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
         .nav-links { list-style: none; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-md); color: var(--text-muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: var(--transition); }
+        .nav-link:hover, .nav-link.active { background-color: rgba(79, 70, 229, 0.1); color: var(--primary); }
 
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: var(--radius-md);
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background-color: rgba(79, 70, 229, 0.1);
-            color: var(--primary);
-        }
-
-        main {
-            flex: 1;
-            padding: 24px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            padding-bottom: 100px;
-        }
+        main { flex: 1; padding: 24px; max-width: 1200px; margin: 0 auto; width: 100%; padding-bottom: 100px; }
 
         .page-section { display: none; }
         .page-section.active-page { display: block; animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header-section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
+        .header-section { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
 
         /* الأزرار والحقول */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 10px 18px;
-            min-height: 44px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            border-radius: var(--radius-md);
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 18px; min-height: 44px; font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-md); border: none; cursor: pointer; text-decoration: none; transition: var(--transition); }
         .btn:active { transform: scale(0.97); }
         .btn-primary { background-color: var(--primary); color: white; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25); }
         .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-primary:disabled { background-color: var(--text-muted); cursor: not-allowed; box-shadow: none; transform: none; }
         .btn-secondary { background-color: var(--input-bg); color: var(--text-main); border: 1px solid var(--border-color); }
         .btn-danger { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; }
         .btn-sm { padding: 6px 10px; min-height: 34px; font-size: 0.8rem; border-radius: var(--radius-sm); }
@@ -213,132 +169,36 @@
         [data-theme="dark"] .btn-copy-email { background-color: rgba(14, 165, 233, 0.15); color: #38bdf8; }
         [data-theme="dark"] .btn-copy-pass { background-color: rgba(245, 158, 11, 0.15); color: #fbbf24; }
 
-        .form-control {
-            width: 100%;
-            min-height: 48px;
-            padding: 12px 16px;
-            font-size: 0.95rem;
-            border: 1.5px solid var(--border-color);
-            border-radius: var(--radius-md);
-            background: var(--input-bg);
-            color: var(--text-main);
-            outline: none;
-            transition: var(--transition);
-        }
-
+        .form-control { width: 100%; min-height: 48px; padding: 12px 16px; font-size: 0.95rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); background: var(--input-bg); color: var(--text-main); outline: none; transition: var(--transition); }
         .form-control:focus { border-color: var(--primary); }
 
         /* أشرطة الفلترة الذكية */
-        .filter-pills {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-            margin-bottom: 24px;
-            scrollbar-width: none;
-        }
+        .filter-pills { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 24px; scrollbar-width: none; }
         .filter-pills::-webkit-scrollbar { display: none; }
-        .pill {
-            padding: 8px 16px;
-            border-radius: 50px;
-            background: var(--input-bg);
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            font-weight: 600;
-            white-space: nowrap;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            transition: var(--transition);
-        }
+        .pill { padding: 8px 16px; border-radius: 50px; background: var(--input-bg); color: var(--text-muted); font-size: 0.85rem; font-weight: 600; white-space: nowrap; cursor: pointer; border: 1px solid var(--border-color); transition: var(--transition); }
         .pill.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         /* نظام البطاقات المبسط */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 16px;
-        }
-
-        .account-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg);
-            padding: 18px;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+        .account-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow); transition: var(--transition); display: flex; flex-direction: column; justify-content: space-between; }
         .account-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
-
         .card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
         .card-favicon { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; background: #f1f5f9; padding: 4px; border: 1px solid var(--border-color); }
         .card-title { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
-
         .card-body { background: rgba(15, 23, 42, 0.03); padding: 12px; border-radius: var(--radius-md); margin-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
         [data-theme="dark"] .card-body { background: rgba(255, 255, 255, 0.03); }
-
         .info-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; gap: 8px; }
         .info-label { color: var(--text-muted); font-weight: 500; min-width: 75px; }
         .info-val { font-family: monospace; font-size: 0.95rem; font-weight: 600; color: var(--text-main); direction: ltr; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; text-align: right; }
-
         .card-actions { display: flex; gap: 8px; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 12px; }
 
         /* المودال */
-        #add-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(11, 15, 25, 0.8);
-            backdrop-filter: blur(6px);
-            z-index: 10500;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-        }
-
-        .modal-card {
-            background: var(--card-bg);
-            padding: 24px;
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 400px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
-        }
+        #add-modal { display: none; position: fixed; inset: 0; background: rgba(11, 15, 25, 0.8); backdrop-filter: blur(6px); z-index: 10500; justify-content: center; align-items: center; padding: 16px; }
+        .modal-card { background: var(--card-bg); padding: 24px; border-radius: var(--radius-lg); width: 100%; max-width: 400px; border: 1px solid var(--border-color); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4); }
 
         /* النافذة السفلية للهواتف */
-        .bottom-nav {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: var(--card-bg);
-            border-top: 1px solid var(--border-color);
-            padding: 10px 6px;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 5000;
-        }
-
-        .bottom-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--text-muted);
-            text-decoration: none;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
+        .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border-color); padding: 10px 6px; justify-content: space-around; align-items: center; z-index: 5000; }
+        .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); text-decoration: none; font-size: 0.75rem; font-weight: 600; padding: 4px; cursor: pointer; background: none; border: none; }
         .bottom-nav-item.active { color: var(--primary); }
 
         @media (max-width: 768px) {
@@ -348,47 +208,31 @@
             .cards-grid { grid-template-columns: 1fr; }
         }
 
-        .toast {
-            position: fixed;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--text-main);
-            color: var(--bg-color);
-            padding: 12px 24px;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            opacity: 0;
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 12000;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            white-space: nowrap;
-        }
+        .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--text-main); color: var(--bg-color); padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 600; opacity: 0; transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 12000; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); white-space: nowrap; }
         .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
 <body>
 
-    <!-- شاشة الـ PIN (مضبوطة على text لتدعم الأحرف والأرقام معاً) -->
+    <!-- شاشة الـ PIN -->
     <div id="pin-screen">
         <div class="pin-card">
             <div style="font-size: 2.5rem; margin-bottom: 10px;">🔒</div>
             <h2>خزنة الحسابات</h2>
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 6px;">أدخل 4 أحرف أو أرقام لفك التشفير العسكري</p>
             <div class="pin-inputs">
-                <!-- استخدام inputmode="text" لفتح الكيبورد الكامل (أحرف + أرقام) -->
                 <input type="password" inputmode="text" maxlength="1" class="pin-digit" autofocus>
                 <input type="password" inputmode="text" maxlength="1" class="pin-digit">
                 <input type="password" inputmode="text" maxlength="1" class="pin-digit">
                 <input type="password" inputmode="text" maxlength="1" class="pin-digit">
             </div>
+            <!-- مؤشر القفل المتصاعد -->
+            <div id="lockout-timer"></div>
             <button class="btn btn-primary" style="width: 100%;" id="pin-submit-btn">فتح الخزنة</button>
         </div>
     </div>
 
-    <!-- نافذة إضافة وتعديل الحساب (3 خانات فقط) -->
+    <!-- نافذة إضافة وتعديل الحساب -->
     <div id="add-modal">
         <div class="modal-card">
             <h3 id="modal-title" style="margin-bottom: 18px;">➕ إضافة حساب جديد</h3>
@@ -435,7 +279,6 @@
                     <div>
                         <div style="display: flex; align-items: center; gap: 10px;">
                             <h1>حساباتي المشفرة</h1>
-                            <!-- عداد الحسابات الأنيق -->
                             <span id="total-accounts" style="background: rgba(79, 70, 229, 0.15); color: var(--primary); padding: 4px 14px; border-radius: 50px; font-size: 0.95rem; font-weight: 700;">0 حساب</span>
                         </div>
                         <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">نسخ سريع للبريد وكلمة السر بضغطة زر واحدة</p>
@@ -509,7 +352,87 @@
         let editingIndex = null;
         let activeFilterKeyword = 'all';
 
-        // 1. محرك التشفير المحلي (AES-GCM 256-bit)
+        // --- نظام القفل المتصاعد (Progressive Lockout) ---
+        let failedAttempts = parseInt(localStorage.getItem('vault_failed_attempts')) || 0;
+        let lockoutUntil = parseInt(localStorage.getItem('vault_lockout_until')) || 0;
+        let lockoutInterval;
+
+        function checkLockoutStatus() {
+            const now = Date.now();
+            if (lockoutUntil > now) {
+                applyLockoutUI(lockoutUntil - now);
+            } else if (lockoutUntil !== 0) {
+                clearLockoutUI();
+            }
+        }
+
+        function handleFailedAttempt() {
+            failedAttempts++;
+            localStorage.setItem('vault_failed_attempts', failedAttempts);
+            
+            if (failedAttempts % 3 === 0) {
+                const lockoutTier = Math.floor(failedAttempts / 3);
+                let lockoutMinutes = 1; // المستوى الأول (3 محاولات)
+                if (lockoutTier === 2) lockoutMinutes = 5; // المستوى الثاني (6 محاولات)
+                else if (lockoutTier === 3) lockoutMinutes = 15; // المستوى الثالث (9 محاولات)
+                else if (lockoutTier >= 4) lockoutMinutes = 60; // المستوى الرابع فأكثر (12+ محاولة)
+                
+                const lockoutDuration = lockoutMinutes * 60 * 1000;
+                lockoutUntil = Date.now() + lockoutDuration;
+                localStorage.setItem('vault_lockout_until', lockoutUntil);
+                applyLockoutUI(lockoutDuration);
+                showToast(`🚫 تم قفل اللوحة مؤقتاً بسبب تكرار المحاولات الخاطئة`);
+            } else {
+                const remaining = 3 - (failedAttempts % 3);
+                showToast(`رمز غير صحيح! متبقي ${remaining} محاولات قبل القفل`);
+            }
+        }
+
+        function applyLockoutUI(durationMs) {
+            const inputs = document.querySelectorAll('.pin-digit');
+            const btn = document.getElementById('pin-submit-btn');
+            const timerMsg = document.getElementById('lockout-timer');
+            
+            inputs.forEach(i => { i.disabled = true; i.value = ''; });
+            btn.disabled = true;
+            timerMsg.style.display = 'block';
+
+            clearInterval(lockoutInterval);
+            lockoutInterval = setInterval(() => {
+                const remaining = lockoutUntil - Date.now();
+                if (remaining <= 0) {
+                    clearLockoutUI();
+                } else {
+                    const mins = Math.floor(remaining / 60000);
+                    const secs = Math.floor((remaining % 60000) / 1000);
+                    timerMsg.innerHTML = `⚠️ تم قفل اللوحة مؤقتاً.<br>الرجاء المحاولة بعد: <span style="font-size:1.1rem; display:inline-block; margin-top:5px; direction:ltr;">${mins}:${secs < 10 ? '0' : ''}${secs}</span>`;
+                }
+            }, 1000);
+        }
+
+        function clearLockoutUI() {
+            clearInterval(lockoutInterval);
+            lockoutUntil = 0;
+            localStorage.removeItem('vault_lockout_until');
+            const inputs = document.querySelectorAll('.pin-digit');
+            inputs.forEach(i => i.disabled = false);
+            document.getElementById('pin-submit-btn').disabled = false;
+            document.getElementById('lockout-timer').style.display = 'none';
+            if (inputs[0]) inputs[0].focus();
+        }
+
+        function resetFailedAttempts() {
+            failedAttempts = 0;
+            lockoutUntil = 0;
+            localStorage.removeItem('vault_failed_attempts');
+            localStorage.removeItem('vault_lockout_until');
+        }
+
+        // فحص حالة القفل عند فتح الصفحة
+        checkLockoutStatus();
+        // ------------------------------------------------
+
+        // محرك التشفير المحلي
         const CryptoEngine = {
             salt: new Uint8Array([45, 78, 12, 89, 101, 33, 67, 90, 23, 56, 88, 99, 11, 22, 33, 44]),
             async deriveKey(pin) {
@@ -540,7 +463,6 @@
             }
         };
 
-        // 2. تسجيل الـ Service Worker والوضع الداكن
         if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 
         function toggleTheme() {
@@ -555,11 +477,10 @@
             if(document.getElementById('theme-toggle-btn')) document.getElementById('theme-toggle-btn').textContent = '☀️ الوضع الفاتح';
         }
 
-        // 3. نظام الخمول وقفل التطبيق
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
             if (document.getElementById('pin-screen').style.display === 'none') {
-                inactivityTimer = setTimeout(lockVault, 180000); // 3 دقائق
+                inactivityTimer = setTimeout(lockVault, 180000);
             }
         }
         function lockVault() {
@@ -567,6 +488,7 @@
             currentPin = ""; cryptoKey = null;
             document.querySelectorAll('.pin-digit').forEach(i => i.value = "");
             showToast("🔒 تم قفل الخزنة للحماية");
+            checkLockoutStatus(); // تأكد من استمرار العداد إذا كان مقفلاً
         }
         ['mousemove', 'keydown', 'touchstart', 'click'].forEach(evt => window.addEventListener(evt, resetInactivityTimer));
         document.addEventListener('visibilitychange', () => { if (document.hidden && document.getElementById('pin-screen').style.display === 'none') lockVault(); });
@@ -591,7 +513,6 @@
             else if(pageId === 'settings') document.querySelectorAll('.bottom-nav-item')[2].classList.add('active');
         }
 
-        // 4. تسجيل الدخول وفك التشفير
         document.getElementById('pin-submit-btn').addEventListener('click', async () => {
             let pin = Array.from(pinInputs).map(i => i.value).join('');
             if(pin.length < 4) return showToast("الرجاء إدخال 4 خانات على الأقل");
@@ -610,7 +531,9 @@
                     } else if (result.status === "success") {
                         rawAccounts = result.accounts || [];
                         localStorage.setItem('offline_encrypted_vault', JSON.stringify(rawAccounts));
-                    } else { return showToast(result.message || "رمز الـ PIN غير صحيح"); }
+                    } else { 
+                        return handleFailedAttempt(); // تم ربط القفل المتصاعد بخطأ السيرفر
+                    }
                 } catch (netErr) {
                     const cached = localStorage.getItem('offline_encrypted_vault');
                     if (cached) {
@@ -619,11 +542,22 @@
                     } else throw netErr;
                 }
 
+                // اختبار التشفير للمسار المحلي دون اتصال لمعرفة صحة الرمز
+                if (rawAccounts.length > 0) {
+                    const testDecrypt = await CryptoEngine.decrypt(rawAccounts[0].user || rawAccounts[0].email || rawAccounts[0].username, cryptoKey);
+                    if (testDecrypt && testDecrypt.startsWith("⚠️")) {
+                        return handleFailedAttempt(); // تم ربط القفل المتصاعد بخطأ التشفير المحلي
+                    }
+                }
+
                 currentAccounts = await Promise.all(rawAccounts.map(async acc => ({
                     name: acc.name || acc.title || 'بدون اسم',
                     email: await CryptoEngine.decrypt(acc.email || acc.user || acc.username, cryptoKey),
                     pass: await CryptoEngine.decrypt(acc.pass || acc.password, cryptoKey)
                 })));
+
+                // تصفير عداد المحاولات الخاطئة عند النجاح
+                resetFailedAttempts();
 
                 document.getElementById('pin-screen').style.display = 'none';
                 showToast("🔓 تم فتح الخزنة بنجاح");
@@ -632,7 +566,6 @@
             } catch (e) { showToast("خطأ في الاتصال أو فك التشفير"); }
         });
 
-        // 5. عرض البطاقات النظيفة مع أزرار النسخ للبريد وكلمة السر وتحديث العداد
         function renderCards(accountsToRender) {
             const counterElem = document.getElementById('total-accounts');
             if (counterElem) {
@@ -685,7 +618,6 @@
             }).join('');
         }
 
-        // --- نظام الفلترة الذكي ---
         function setFilter(keyword, btnElem) {
             activeFilterKeyword = keyword.toLowerCase();
             document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
@@ -695,27 +627,19 @@
 
         function filterAccounts() {
             const query = document.getElementById('search-input').value.toLowerCase();
-            
             const filtered = currentAccounts.filter(acc => {
                 const name = (acc.name||'').toLowerCase();
                 const email = (acc.email||'').toLowerCase();
-                
-                // البحث النصي في شريط البحث
                 const matchesSearch = name.includes(query) || email.includes(query);
-                
-                // الفلترة عبر أزرار التصنيفات الذكية
                 let matchesFilter = true;
                 if (activeFilterKeyword !== 'all') {
                     matchesFilter = name.includes(activeFilterKeyword) || email.includes(activeFilterKeyword);
-                    
-                    // تحسين التخمين للمنصات المشهورة
                     if (activeFilterKeyword === 'تويتر') matchesFilter = name.includes('تويتر') || name.includes('twitter') || name.includes('x');
                     if (activeFilterKeyword === 'انستغرام') matchesFilter = name.includes('انستغرام') || name.includes('instagram') || name.includes('insta');
                     if (activeFilterKeyword === 'facebook') matchesFilter = name.includes('فيسبوك') || name.includes('facebook') || name.includes('fb');
                     if (activeFilterKeyword === 'تيك توك') matchesFilter = name.includes('تيك توك') || name.includes('tiktok') || name.includes('tik tok');
                     if (activeFilterKeyword === 'gmail') matchesFilter = name.includes('gmail') || name.includes('جيميل') || email.includes('gmail');
                 }
-
                 return matchesSearch && matchesFilter;
             });
             renderCards(filtered);
@@ -741,7 +665,6 @@
             }).catch(() => showToast("فشل النسخ"));
         }
 
-        // 6. الإضافة والتعديل والحفظ مع التنبيه عند التكرار
         function generatePassword() {
             const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+";
             let pass = "";
@@ -773,7 +696,6 @@
 
         async function saveAccount(e) {
             e.preventDefault();
-            
             const newName = document.getElementById('acc-name').value.trim();
             const newEmail = document.getElementById('acc-email').value.trim();
             const newPass = document.getElementById('acc-pass').value;
@@ -802,7 +724,6 @@
             await syncEncryptedVault();
             closeModal();
             document.getElementById('search-input').value = "";
-            // استعادة الفلتر إلى "الكل" بعد الحفظ لعرض جميع البطاقات
             setFilter('all', document.querySelector('.pill'));
         }
 
@@ -810,7 +731,7 @@
             if(!confirm("هل أنت متأكد من حذف هذا الحساب نهائيًا؟")) return;
             currentAccounts.splice(index, 1);
             await syncEncryptedVault("🗑️ جاري الحذف وتحديث الخزنة...");
-            filterAccounts(); // إعادة تطبيق الفلتر الحالي بعد الحذف
+            filterAccounts();
         }
 
         async function syncEncryptedVault(customMsg) {
@@ -830,7 +751,6 @@
             } catch (e) { showToast("⚠️ تم الحفظ محليًا في الهاتف (تعذر الاتصال بالسحابة)"); }
         }
 
-        // 7. التصدير والاستيراد الذكي (يدعم CSV من البرنامج القديم + JSON)
         async function exportData() {
             showToast("جاري تجهيز النسخة المشفرة...");
             const encryptedExport = await Promise.all(currentAccounts.map(async acc => ({
